@@ -312,72 +312,100 @@ let audioPlayer;
 // KAYDET/YÜKLE FONKSİYONLARI (GitHub Pages'te çalışır)
 function saveData() {
 try {
-const data = {
+// Önce fotoğrafları kaydet (her zaman çalışır)
+const photoData = {
 photos: photos,
-songs: songs.map(song => song ? {
-name: song.name, 
-data: song.data,
-size: song.size || 0
-} : null),
+lastSaved: new Date().toISOString()
+};
+localStorage.setItem('lovePhotos', JSON.stringify(photoData));
+
+// Şarkıları ayrı ayrı kaydet (daha güvenli)
+const songData = {
+songNames: songs.map(song => song ? song.name : null),
 currentSongIndex: currentSongIndex,
 lastSaved: new Date().toISOString()
 };
+localStorage.setItem('loveSongs', JSON.stringify(songData));
 
-// localStorage boyut kontrolü
-const dataString = JSON.stringify(data);
-const dataSize = new Blob([dataString]).size;
-
-if (dataSize > 50 * 1024 * 1024) { // 50MB limit
-console.warn('⚠️ Veri çok büyük, şarkılar kaydedilemeyebilir');
-// Sadece fotoğrafları kaydet
-const photoOnlyData = {
-photos: photos,
-songs: Array(6).fill(null),
-currentSongIndex: -1,
-lastSaved: new Date().toISOString()
-};
-localStorage.setItem('loveStoryData', JSON.stringify(photoOnlyData));
-alert('⚠️ Şarkılar çok büyük! Sadece fotoğraflar kaydedildi. Daha küçük şarkı dosyaları kullanın.');
-} else {
-localStorage.setItem('loveStoryData', dataString);
-console.log('✅ Veriler kaydedildi:', new Date().toLocaleString(), `(${(dataSize/1024).toFixed(1)}KB)`);
+// Ses dosyalarını ayrı kaydet
+songs.forEach((song, index) => {
+if (song && song.data) {
+try {
+// Her şarkıyı ayrı key'de sakla
+localStorage.setItem(`loveSong_${index}`, song.data);
+console.log(`✅ Şarkı ${index} kaydedildi: ${song.name}`);
+} catch(e) {
+console.warn(`⚠️ Şarkı ${index} kaydedilemedi:`, song.name);
+// Bu şarkıyı null yap
+songs[index] = null;
 }
+}
+});
+
+console.log('✅ Veriler kaydedildi:', new Date().toLocaleString());
 } catch(e) {
 console.error('❌ Kaydetme hatası:', e);
-alert('❌ Veriler kaydedilemedi! Şarkı dosyaları çok büyük olabilir.');
+alert('❌ Bazı veriler kaydedilemedi!');
 }
 }
 
 function loadData() {
 try {
-const saved = localStorage.getItem('loveStoryData');
-if (saved) {
-const data = JSON.parse(saved);
-photos = data.photos || Array(8).fill(null);
+let hasData = false;
 
-// Şarkıları güvenli yükle
-songs = (data.songs || Array(6).fill(null)).map(song => {
-if (song && song.name && song.data) {
-return {
-name: song.name, 
-data: song.data, 
-file: null,
-size: song.size || 0
+// Fotoğrafları yükle
+const photoSaved = localStorage.getItem('lovePhotos');
+if (photoSaved) {
+const photoData = JSON.parse(photoSaved);
+photos = photoData.photos || Array(8).fill(null);
+hasData = true;
+console.log('✅ Fotoğraflar yüklendi');
+}
+
+// Şarkı bilgilerini yükle
+const songSaved = localStorage.getItem('loveSongs');
+if (songSaved) {
+const songData = JSON.parse(songSaved);
+currentSongIndex = songData.currentSongIndex || -1;
+
+// Şarkıları tek tek yükle
+songs = Array(6).fill(null);
+songData.songNames.forEach((name, index) => {
+if (name) {
+const songDataStored = localStorage.getItem(`loveSong_${index}`);
+if (songDataStored) {
+songs[index] = {
+name: name,
+data: songDataStored,
+file: null
 };
+console.log(`✅ Şarkı ${index} yüklendi: ${name}`);
+} else {
+console.warn(`⚠️ Şarkı ${index} bulunamadı: ${name}`);
 }
-return null;
+}
 });
-currentSongIndex = data.currentSongIndex || -1;
-console.log('✅ Veriler yüklendi:', data.lastSaved);
-return true;
+hasData = true;
+console.log('✅ Şarkılar yüklendi');
 }
+
+return hasData;
 } catch(e) {
 console.error('❌ Veri yükleme hatası:', e);
-// Bozuk veriyi temizle
-localStorage.removeItem('loveStoryData');
-alert('❌ Eski veriler bozuk! Temizlendi, yeniden yükleyin.');
-}
+// Bozuk verileri temizle
+clearAllData();
 return false;
+}
+}
+
+function clearAllData() {
+// Tüm verileri temizle
+localStorage.removeItem('lovePhotos');
+localStorage.removeItem('loveSongs');
+for(let i = 0; i < 6; i++) {
+localStorage.removeItem(`loveSong_${i}`);
+}
+console.log('🧹 Tüm veriler temizlendi');
 }
 
 const photoTitles = [
@@ -688,7 +716,12 @@ setInterval(saveData, 30000);
 // Sayfa kapanırken kaydet
 window.addEventListener('beforeunload', saveData);
 
-console.log('✅ Site yüklendi! GitHub Pages\'te localStorage çalışıyor.');
+// Veri temizleme butonu (geliştirme için)
+if (window.location.search.includes('debug=1')) {
+document.body.innerHTML += '<button onclick="clearAllData(); location.reload();" style="position:fixed; top:10px; right:10px; z-index:9999; background:red; color:white; padding:10px;">🧹 Verileri Temizle</button>';
+}
+
+console.log('✅ Site yüklendi! Yeni kaydetme sistemi aktif.');
 });
 </script>
 </body>
