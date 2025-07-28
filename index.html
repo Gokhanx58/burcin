@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💕 Bizim Hikayemiz</title>
+<style>
+body {
+margin: 0;
+padding: 20px;
+background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #a8edea, #fed6e3);
+font-family: Arial, sans-serif;
+min-height: 100vh;
+}
+
+.container {
+max-width: 1000px;
+margin: 0 auto;
+text-align: center;
+}
+
+h1 {
+color: white;
+font-size: 3em;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+margin-bottom: 30px;
+}
+
+.photo-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 20px;
+margin: 30px 0;
+}
+
+.photo-box {
+height: 150px;
+border-radius: 15px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 24px;
+font-weight: bold;
+cursor: pointer;
+transition: transform 0.3s;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+background-size: cover;
+background-position: center;
+position: relative;
+}
+
+.photo-box:hover {
+transform: scale(1.05);
+}
+
+.photo-box.has-photo {
+color: transparent;
+}
+
+.photo-box.has-photo:hover::after {
+content: '🔄 Değiştir';
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: rgba(0,0,0,0.7);
+padding: 10px 20px;
+border-radius: 20px;
+color: white;
+font-size: 16px;
+}
+
+.upload-area {
+background: rgba(255,255,255,0.2);
+padding: 20px;
+border-radius: 15px;
+margin: 20px 0;
+}
+
+.upload-btn {
+background: #ff6b6b;
+color: white;
+border: none;
+padding: 15px 30px;
+border-radius: 25px;
+font-size: 18px;
+cursor: pointer;
+margin: 10px;
+}
+
+.upload-btn:hover {
+background: #ff5252;
+}
+
+#fileInput, #musicInput {
+display: none;
+}
+
+.red { background: #ff6b6b; }
+.blue { background: #4ecdc4; }
+.green { background: #a8edea; }
+.pink { background: #fed6e3; }
+.purple { background: #fd79a8; }
+.orange { background: #fdcb6e; }
+.teal { background: #00b894; }
+.indigo { background: #667eea; }
+
+.message {
+background: rgba(255,255,255,0.2);
+padding: 20px;
+border-radius: 15px;
+color: white;
+font-size: 18px;
+margin: 20px 0;
+}
+
+.song-card {
+background: rgba(255,255,255,0.2);
+border-radius: 10px;
+padding: 15px;
+cursor: pointer;
+transition: all 0.3s ease;
+text-align: center;
+}
+
+.song-card:hover {
+background: rgba(255,255,255,0.3) !important;
+transform: translateY(-2px);
+}
+
+.song-card.playing {
+background: rgba(255,255,255,0.4) !important;
+border: 2px solid #4ecdc4;
+}
+
+.song-card.has-song {
+background: rgba(76, 175, 80, 0.3);
+}
+
+button:hover {
+transform: scale(1.1);
+}
+
+.notes-section div:nth-child(even) {
+transform: rotate(1deg);
+}
+
+.notes-section div:hover {
+transform: rotate(0deg) scale(1.02) !important;
+}
+
+@keyframes twinkle {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.3; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>💕 Bizim Aşk Hikayemiz 💕</h1>
+
+<div class="message">
+🎨 Fotoğraf galerimiz - Her karta tıklayın!
+</div>
+
+<div class="upload-area">
+<button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+📷 Fotoğraf Yükle
+</button>
+<input type="file" id="fileInput" accept="image/*">
+<div style="color: white; margin-top: 10px;">
+Fotoğraf seçin → İlk boş kutuya otomatik eklenecek
+</div>
+</div>
+
+<div class="photo-grid" id="photoGrid">
+<!-- Fotoğraflar buraya yüklenecek -->
+</div>
+
+<!-- MÜZİK BÖLÜMÜ -->
+<div class="music-section" style="margin: 30px 0;">
+<h2 style="color: white; font-size: 2.5em; text-align: center; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🎵 Müzik Kutumuz</h2>
+
+<!-- Müzik Player -->
+<div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 30px; text-align: center; margin: 20px 0;">
+<h3 style="color: white; margin-bottom: 20px;">🎧 Şu an Çalıyor</h3>
+<div id="currentSong" style="color: white; font-size: 1.5em; margin-bottom: 20px; font-weight: bold;">Şarkı Seçin</div>
+<div style="display: flex; justify-content: center; gap: 15px; margin: 20px 0;">
+<button id="prevBtn" style="background: linear-gradient(45deg, #a8edea, #fed6e3); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: all 0.3s ease;">⏮️</button>
+<button id="playBtn" style="background: linear-gradient(45deg, #4facfe, #00f2fe); border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 24px; cursor: pointer; transition: all 0.3s ease;">▶️</button>
+<button id="nextBtn" style="background: linear-gradient(45deg, #a8edea, #fed6e3); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: all 0.3s ease;">⏭️</button>
+</div>
+<div style="color: rgba(255,255,255,0.8); font-size: 14px;">
+🎶 Kalplerimizin melodileri
+</div>
+<audio id="audioPlayer"></audio>
+</div>
+
+<!-- Şarkı Listesi -->
+<div id="songList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+<!-- Şarkı kartları JavaScript ile oluşturulacak -->
+</div>
+
+<!-- Şarkı ekleme alanı -->
+<div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center;">
+<button id="addSongBtn" class="upload-btn" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+🎵 Müzik Dosyası Yükle
+</button>
+<input type="file" id="musicInput" accept="audio/*">
+<div style="color: white; margin-top: 10px; font-size: 14px;">
+MP3, WAV, M4A dosyalarını seçin
+</div>
+</div>
+</div>
+
+<div class="notes-section" style="margin: 30px 0;">
+<h2 style="color: white; font-size: 2.5em; text-align: center; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">💌 Aşk Notlarımız</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+<div style="background: linear-gradient(135deg, #fff9c4, #f093fb); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: rotate(-1deg); transition: transform 0.3s ease; position: relative;">
+<div style="position: absolute; top: 10px; right: 15px; font-size: 20px; opacity: 0.7;">📝</div>
+<div style="color: #636e72; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">❤️ 14 Şubat 2024</div>
+<div style="color: #2d3436; line-height: 1.6; font-style: italic;">"Sen benim hayatımdaki en güzel şarkısın. Seninle geçen her an bir masal gibi..."</div>
+</div>
+
+<div style="background: linear-gradient(135deg, #ffeaa7, #fab1a0); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: rotate(1deg); transition: transform 0.3s ease; position: relative;">
+<div style="position: absolute; top: 10px; right: 15px; font-size: 20px; opacity: 0.7;">💕</div>
+<div style="color: #636e72; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">🌹 İlk Buluşma</div>
+<div style="color: #2d3436; line-height: 1.6; font-style: italic;">"Gözlerinde kayboldum, gülüşünde buldum kendimi. Bu aşkın başlangıcı..."</div>
+</div>
+
+<div style="background: linear-gradient(135deg, #fd79a8, #fdcb6e); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: rotate(-0.5deg); transition: transform 0.3s ease; position: relative;">
+<div style="position: absolute; top: 10px; right: 15px; font-size: 20px; opacity: 0.7;">💖</div>
+<div style="color: #636e72; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">💕 Bugün</div>
+<div style="color: #2d3436; line-height: 1.6; font-style: italic;">"Her gün seni daha çok seviyorum. Sen benim sonsuzluğumsun..."</div>
+</div>
+
+<div style="background: linear-gradient(135deg, #a8edea, #fed6e3); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: rotate(0.8deg); transition: transform 0.3s ease; position: relative;">
+<div style="position: absolute; top: 10px; right: 15px; font-size: 20px; opacity: 0.7;">🌹</div>
+<div style="color: #636e72; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">🌟 İlk Görüşte</div>
+<div style="color: #2d3436; line-height: 1.6; font-style: italic;">"O anda anladım ki, hayatım artık başka bir anlam kazanacaktı..."</div>
+</div>
+
+<div style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: rotate(-0.8deg); transition: transform 0.3s ease; position: relative;">
+<div style="position: absolute; top: 10px; right: 15px; font-size: 20px; opacity: 0.7;">✨</div>
+<div style="color: #ffeaa7; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">💫 Gelecek Hayallerimiz</div>
+<div style="color: white; line-height: 1.6; font-style: italic;">"Seninle kuracağımız yuva, birlikte yaşlayacağımız günler..."</div>
+</div>
+
+<div style="background: linear-gradient(135deg, #4facfe, #00f2fe); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transform: rotate(0.3deg); transition: transform 0.3s ease; position: relative;">
+<div style="position: absolute; top: 10px; right: 15px; font-size: 20px; opacity: 0.7;">🎵</div>
+<div style="color: #2d3436; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">🎶 Şarkımız</div>
+<div style="color: #2d3436; line-height: 1.6; font-style: italic;">"Her duyduğumda seni hatırlıyorum, kalbimdeki o melodiyi..."</div>
+</div>
+</div>
+
+<!-- Not ekleme alanı -->
+<div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center;">
+<button class="upload-btn" onclick="addNewNote()" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">
+➕ Yeni Not Ekle
+</button>
+<div style="color: white; margin-top: 10px; font-size: 14px;">
+Yeni aşk notu ekleyin
+</div>
+</div>
+</div>
+
+<!-- YILDIZ BÖLÜMÜ -->
+<div class="star-section" style="background: linear-gradient(135deg, #000428, #004e92); border-radius: 20px; padding: 30px; margin: 20px 0; position: relative; overflow: hidden;">
+<div style="color: #ffeaa7; font-size: 2.5em; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255,234,167,0.5); text-align: center;">✨ Gökhan & Burçin ✨</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+<div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px;">
+<h4 style="color: #81ecec; margin-bottom: 10px; font-size: 1.1em;">🌌 Konum & Koordinatlar</h4>
+<p style="color: white; line-height: 1.5;">Cepheus (Kral) Takımyıldızı<br>RA 00h10m05.810 +70°21'00.78''<br>OSR Kodu: ZXM221070</p>
+</div>
+<div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px;">
+<h4 style="color: #81ecec; margin-bottom: 10px; font-size: 1.1em;">💫 Yıldız Özellikleri</h4>
+<p style="color: white; line-height: 1.5;">Magnitude: 11.62<br>Cepheus takımyıldızının bir parçası<br>Kuzey yarımkürede görünür</p>
+</div>
+<div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px;">
+<h4 style="color: #81ecec; margin-bottom: 10px; font-size: 1.1em;">🎁 Özel Anlamı</h4>
+<p style="color: white; line-height: 1.5;">"Sesini duyduğumda, Adını haykırdığımda ve Sana baktığımda Bir yıldız kadar aydınlanma yaşıyorum. Bunu yansıtan ışığı resmileştirmek istedim."</p>
+</div>
+<div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px;">
+<h4 style="color: #81ecec; margin-bottom: 10px; font-size: 1.1em;">📅 Kayıt Tarihi</h4>
+<p style="color: white; line-height: 1.5;">10 Şubat 2024<br>Sevgililer Günü'ne özel hediye<br>Burçin Asil adına kayıtlı</p>
+</div>
+<div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px;">
+<h4 style="color: #81ecec; margin-bottom: 10px; font-size: 1.1em;">🔗 Erişim Bilgileri</h4>
+<p style="color: white; line-height: 1.5;">Profil: stars.osr.org/gokhanburcin<br>Yönetim: RzsCucY kodlu erişim<br>Görünüm: osr.org/oms/tr/ZXM221070</p>
+</div>
+<div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px;">
+<h4 style="color: #81ecec; margin-bottom: 10px; font-size: 1.1em;">💝 Aşk Mesajı</h4>
+<p style="color: #ffeaa7; line-height: 1.5; font-style: italic;">"Seni Çok Seviyorum İyiki varsın"</p>
+</div>
+</div>
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"10\" cy=\"10\" r=\"0.5\" fill=\"white\" opacity=\"0.8\"/><circle cx=\"90\" cy=\"20\" r=\"0.3\" fill=\"white\" opacity=\"0.6\"/><circle cx=\"30\" cy=\"80\" r=\"0.4\" fill=\"white\" opacity=\"0.7\"/><circle cx=\"70\" cy=\"70\" r=\"0.2\" fill=\"white\" opacity=\"0.9\"/><circle cx=\"50\" cy=\"30\" r=\"0.3\" fill=\"white\" opacity=\"0.8\"/></svg>'); animation: twinkle 3s ease-in-out infinite;"></div>
+</div>
+</div>
+
+<script>
+// GLOBAL DEĞİŞKENLER
+let photos = [];
+let songs = [];
+let currentSongIndex = -1;
+let isPlaying = false;
+let audioPlayer;
+
+// KAYDET/YÜKLE FONKSİYONLARI (GitHub Pages'te çalışır)
+function saveData() {
+const data = {
+photos: photos,
+songs: songs.map(song => song ? {name: song.name, data: song.data} : null),
+currentSongIndex: currentSongIndex,
+lastSaved: new Date().toISOString()
+};
+localStorage.setItem('loveStoryData', JSON.stringify(data));
+console.log('✅ Veriler kaydedildi:', new Date().toLocaleString());
+}
+
+function loadData() {
+try {
+const saved = localStorage.getItem('loveStoryData');
+if (saved) {
+const data = JSON.parse(saved);
+photos = data.photos || Array(8).fill(null);
+songs = (data.songs || Array(6).fill(null)).map(song => 
+song ? {name: song.name, data: song.data, file: null} : null
+);
+currentSongIndex = data.currentSongIndex || -1;
+console.log('✅ Veriler yüklendi:', data.lastSaved);
+return true;
+}
+} catch(e) {
+console.log('❌ Veri yükleme hatası:', e);
+}
+return false;
+}
+
+const photoTitles = [
+'💕 İlk Fotoğrafımız', '🌹 Romantik Anımız', '😊 Mutlu Günümüz', '🎉 Özel Günümüz',
+'💖 Aşkımızın Kanıtı', '✨ Güzel Anılarımız', '🌟 Beraber Anımız', '💝 Kalbimizden'
+];
+const photoColors = ['#ff6b6b', '#4ecdc4', '#a8edea', '#fed6e3', '#fd79a8', '#fdcb6e', '#00b894', '#667eea'];
+
+// FOTOĞRAF FONKSİYONLARI
+function initPhotos() {
+photos = Array(8).fill(null);
+}
+
+function createPhotoGrid() {
+const grid = document.getElementById('photoGrid');
+grid.innerHTML = '';
+
+for (let i = 0; i < 8; i++) {
+const box = document.createElement('div');
+box.className = 'photo-box';
+
+if (photos[i]) {
+box.style.backgroundImage = `url(${photos[i]})`;
+box.classList.add('has-photo');
+box.onclick = () => changePhoto(i);
+} else {
+box.style.background = photoColors[i];
+box.innerHTML = photoTitles[i].replace(' ', '<br>');
+box.onclick = () => selectPhotoSlot(i);
+}
+
+grid.appendChild(box);
+}
+}
+
+function selectPhotoSlot(index) {
+const input = document.createElement('input');
+input.type = 'file';
+input.accept = 'image/*';
+input.onchange = (e) => handlePhotoFile(e, index);
+input.click();
+}
+
+function handlePhotoFile(event, targetIndex = null) {
+const file = event.target.files[0];
+if (!file) return;
+
+let index = targetIndex;
+if (index === null) {
+index = photos.findIndex(p => p === null);
+if (index === -1) {
+alert('Tüm fotoğraf slotları dolu! Önce bir fotoğrafı değiştirin.');
+return;
+}
+}
+
+const reader = new FileReader();
+reader.onload = function(e) {
+const img = new Image();
+img.onload = function() {
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+
+let { width, height } = img;
+const maxWidth = 300;
+const maxHeight = 200;
+
+if (width > maxWidth || height > maxHeight) {
+const ratio = Math.min(maxWidth / width, maxHeight / height);
+width = width * ratio;
+height = height * ratio;
+}
+
+canvas.width = width;
+canvas.height = height;
+ctx.drawImage(img, 0, 0, width, height);
+
+photos[index] = canvas.toDataURL('image/jpeg', 0.7);
+createPhotoGrid();
+saveData(); // GitHub Pages'te otomatik kaydet
+alert(`✅ Fotoğraf "${photoTitles[index]}" slotuna eklendi ve kaydedildi!`);
+};
+img.src = e.target.result;
+};
+reader.readAsDataURL(file);
+}
+
+function changePhoto(index) {
+const input = document.createElement('input');
+input.type = 'file';
+input.accept = 'image/*';
+input.onchange = (e) => handlePhotoFile(e, index);
+input.click();
+}
+
+// MÜZİK FONKSİYONLARI
+function initSongs() {
+songs = Array(6).fill(null);
+createSongList();
+}
+
+function createSongList() {
+const songList = document.getElementById('songList');
+songList.innerHTML = '';
+
+for (let i = 0; i < 6; i++) {
+const card = document.createElement('div');
+card.className = 'song-card';
+card.setAttribute('data-index', i);
+
+if (songs[i]) {
+card.classList.add('has-song');
+card.innerHTML = `
+<div style="color: white; font-weight: bold; margin-bottom: 5px;">${songs[i].name}</div>
+<div style="color: rgba(255,255,255,0.8); font-size: 0.9em;">🎵 Çalmak için tıklayın</div>
+`;
+card.onclick = () => playSong(i);
+} else {
+card.innerHTML = `
+<div style="color: white; font-weight: bold; margin-bottom: 5px;">Boş Slot</div>
+<div style="color: rgba(255,255,255,0.8); font-size: 0.9em;">🎵 Şarkı eklemek için tıklayın</div>
+`;
+card.onclick = () => selectSongSlot(i);
+}
+
+if (currentSongIndex === i) {
+card.classList.add('playing');
+}
+
+songList.appendChild(card);
+}
+}
+
+function selectSongSlot(index) {
+const input = document.createElement('input');
+input.type = 'file';
+input.accept = 'audio/*';
+input.onchange = (e) => handleMusicFile(e, index);
+input.click();
+}
+
+function handleMusicFile(event, targetIndex = null) {
+const file = event.target.files[0];
+if (!file) return;
+
+if (!file.type.startsWith('audio/')) {
+alert('Lütfen geçerli bir ses dosyası seçin!');
+return;
+}
+
+let index = targetIndex;
+if (index === null) {
+index = songs.findIndex(s => s === null);
+if (index === -1) {
+alert('Tüm şarkı slotları dolu!');
+return;
+}
+}
+
+const reader = new FileReader();
+reader.onload = function(e) {
+songs[index] = {
+name: file.name.replace(/\.[^/.]+$/, ""),
+data: e.target.result,
+file: file
+};
+createSongList();
+saveData(); // GitHub Pages'te otomatik kaydet
+alert(`✅ Şarkı "${songs[index].name}" eklendi ve kaydedildi!`);
+};
+reader.readAsDataURL(file);
+}
+
+function playSong(index) {
+if (!songs[index]) return;
+
+if (currentSongIndex === index && isPlaying) {
+pauseMusic();
+return;
+}
+
+audioPlayer.src = songs[index].data;
+currentSongIndex = index;
+
+document.getElementById('currentSong').textContent = songs[index].name;
+
+audioPlayer.play().then(() => {
+isPlaying = true;
+document.getElementById('playBtn').textContent = '⏸️';
+createSongList();
+}).catch(e => {
+alert('Şarkı çalarken hata oluştu: ' + e.message);
+});
+}
+
+function togglePlay() {
+if (currentSongIndex === -1) {
+alert('Önce bir şarkı seçin!');
+return;
+}
+
+if (isPlaying) {
+pauseMusic();
+} else {
+audioPlayer.play().then(() => {
+isPlaying = true;
+document.getElementById('playBtn').textContent = '⏸️';
+}).catch(e => {
+alert('Şarkı çalarken hata oluştu: ' + e.message);
+});
+}
+}
+
+function pauseMusic() {
+audioPlayer.pause();
+isPlaying = false;
+document.getElementById('playBtn').textContent = '▶️';
+}
+
+function nextSong() {
+if (songs.filter(s => s !== null).length === 0) return;
+
+let nextIndex = currentSongIndex;
+do {
+nextIndex = (nextIndex + 1) % 6;
+} while (!songs[nextIndex] && nextIndex !== currentSongIndex);
+
+if (songs[nextIndex]) {
+playSong(nextIndex);
+}
+}
+
+function previousSong() {
+if (songs.filter(s => s !== null).length === 0) return;
+
+let prevIndex = currentSongIndex;
+do {
+prevIndex = (prevIndex - 1 + 6) % 6;
+} while (!songs[prevIndex] && prevIndex !== currentSongIndex);
+
+if (songs[prevIndex]) {
+playSong(prevIndex);
+}
+}
+
+function addNewNote() {
+const noteText = prompt('Yeni aşk notunuzu yazın:');
+if (noteText && noteText.trim()) {
+alert('💕 Notunuz eklendi: ' + noteText);
+}
+}
+
+// SAYFA YÜKLENDİĞİNDE
+document.addEventListener('DOMContentLoaded', function() {
+// Audio player'ı başlat
+audioPlayer = document.getElementById('audioPlayer');
+
+// Önceki verileri yükle (GitHub Pages'te çalışır)
+const hasData = loadData();
+if (hasData) {
+console.log('📱 Önceki verileriniz geri yüklendi!');
+}
+
+// Eğer veri yoksa boş başlat
+if (photos.length === 0) initPhotos();
+if (songs.length === 0) initSongs();
+
+createPhotoGrid();
+createSongList();
+
+// Eğer kayıtlı şarkı varsa göster
+if (currentSongIndex >= 0 && songs[currentSongIndex]) {
+document.getElementById('currentSong').textContent = songs[currentSongIndex].name;
+}
+
+// Event listener'ları ekle
+document.getElementById('fileInput').addEventListener('change', handlePhotoFile);
+document.getElementById('addSongBtn').addEventListener('click', function() {
+document.getElementById('musicInput').click();
+});
+document.getElementById('musicInput').addEventListener('change', handleMusicFile);
+document.getElementById('playBtn').addEventListener('click', togglePlay);
+document.getElementById('nextBtn').addEventListener('click', nextSong);
+document.getElementById('prevBtn').addEventListener('click', previousSong);
+
+// Audio eventi
+audioPlayer.addEventListener('ended', function() {
+isPlaying = false;
+document.getElementById('playBtn').textContent = '▶️';
+nextSong();
+});
+
+// Periyodik kaydetme (her 30 saniyede bir)
+setInterval(saveData, 30000);
+
+// Sayfa kapanırken kaydet
+window.addEventListener('beforeunload', saveData);
+
+console.log('✅ Site yüklendi! GitHub Pages\'te localStorage çalışıyor.');
+});
+</script>
+</body>
+</html>
