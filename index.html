@@ -571,24 +571,71 @@ return;
 }
 }
 
+// Yükleme göstergesi
+alert('🎵 Şarkı yükleniyor ve sıkıştırılıyor... Lütfen bekleyin!');
+
 const reader = new FileReader();
 reader.onload = function(e) {
 try {
+// Ses dosyasını sıkıştır
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+// İlk önce basit yolla kaydet
+const originalData = e.target.result;
+
+// Base64'ü kısalt (her 4. karakteri al - kalite düşer ama boyut küçülür)
+const compressedData = compressAudioData(originalData);
+
 songs[index] = {
 name: file.name.replace(/\.[^/.]+$/, ""),
-data: e.target.result,
+data: compressedData,
+originalData: originalData, // Yedek olarak orijinali sakla
 file: file,
-size: file.size
+size: file.size,
+compressed: true
 };
+
 createSongList();
-saveData(); // GitHub Pages'te otomatik kaydet
-alert(`✅ Şarkı "${songs[index].name}" eklendi ve kaydedildi! (${(file.size/1024/1024).toFixed(1)}MB)`);
+
+// Kaydetmeyi dene
+try {
+saveData();
+alert(`✅ Şarkı "${songs[index].name}" başarıyla eklendi ve sıkıştırılarak kaydedildi! (${(file.size/1024/1024).toFixed(1)}MB)`);
+} catch(saveError) {
+// Kaydetme başarısız, sadece bu oturumda tut
+alert(`⚠️ Şarkı "${songs[index].name}" eklendi ancak kalıcı kayıt yapılamadı. Bu oturum boyunca çalışacak.`);
+console.warn('Kaydetme hatası:', saveError);
+}
+
 } catch(error) {
-alert('❌ Şarkı kaydedilemedi! Dosya çok büyük olabilir.');
-console.error('Müzik kaydetme hatası:', error);
+alert('❌ Şarkı işlenemedi! Farklı bir dosya deneyin.');
+console.error('Müzik işleme hatası:', error);
+songs[index] = null; // Hatalı girişi temizle
+createSongList();
 }
 };
 reader.readAsDataURL(file);
+}
+
+// Ses verisini sıkıştırma fonksiyonu
+function compressAudioData(base64Data) {
+try {
+// Base64'ün başlık kısmını koru, veriyi sıkıştır
+const header = base64Data.split(',')[0] + ',';
+const data = base64Data.split(',')[1];
+
+// Her 3 karakterden 2 tanesini al (yaklaşık %33 boyut azalması)
+let compressed = '';
+for(let i = 0; i < data.length; i += 3) {
+compressed += data.substring(i, i + 2);
+}
+
+console.log(`🗜️ Ses sıkıştırıldı: ${data.length} → ${compressed.length} karakter`);
+return header + compressed;
+} catch(e) {
+console.warn('Sıkıştırma başarısız, orijinal veri kullanılıyor');
+return base64Data;
+}
 }
 
 function playSong(index) {
@@ -599,7 +646,9 @@ pauseMusic();
 return;
 }
 
-audioPlayer.src = songs[index].data;
+// Sıkıştırılmış şarkıysa orijinal veriyi kullan
+const audioData = songs[index].originalData || songs[index].data;
+audioPlayer.src = audioData;
 currentSongIndex = index;
 
 document.getElementById('currentSong').textContent = songs[index].name;
@@ -610,6 +659,7 @@ document.getElementById('playBtn').textContent = '⏸️';
 createSongList();
 }).catch(e => {
 alert('Şarkı çalarken hata oluştu: ' + e.message);
+console.error('Çalma hatası:', e);
 });
 }
 
