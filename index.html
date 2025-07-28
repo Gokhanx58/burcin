@@ -311,14 +311,41 @@ let audioPlayer;
 
 // KAYDET/YÜKLE FONKSİYONLARI (GitHub Pages'te çalışır)
 function saveData() {
+try {
 const data = {
 photos: photos,
-songs: songs.map(song => song ? {name: song.name, data: song.data} : null),
+songs: songs.map(song => song ? {
+name: song.name, 
+data: song.data,
+size: song.size || 0
+} : null),
 currentSongIndex: currentSongIndex,
 lastSaved: new Date().toISOString()
 };
-localStorage.setItem('loveStoryData', JSON.stringify(data));
-console.log('✅ Veriler kaydedildi:', new Date().toLocaleString());
+
+// localStorage boyut kontrolü
+const dataString = JSON.stringify(data);
+const dataSize = new Blob([dataString]).size;
+
+if (dataSize > 50 * 1024 * 1024) { // 50MB limit
+console.warn('⚠️ Veri çok büyük, şarkılar kaydedilemeyebilir');
+// Sadece fotoğrafları kaydet
+const photoOnlyData = {
+photos: photos,
+songs: Array(6).fill(null),
+currentSongIndex: -1,
+lastSaved: new Date().toISOString()
+};
+localStorage.setItem('loveStoryData', JSON.stringify(photoOnlyData));
+alert('⚠️ Şarkılar çok büyük! Sadece fotoğraflar kaydedildi. Daha küçük şarkı dosyaları kullanın.');
+} else {
+localStorage.setItem('loveStoryData', dataString);
+console.log('✅ Veriler kaydedildi:', new Date().toLocaleString(), `(${(dataSize/1024).toFixed(1)}KB)`);
+}
+} catch(e) {
+console.error('❌ Kaydetme hatası:', e);
+alert('❌ Veriler kaydedilemedi! Şarkı dosyaları çok büyük olabilir.');
+}
 }
 
 function loadData() {
@@ -327,15 +354,28 @@ const saved = localStorage.getItem('loveStoryData');
 if (saved) {
 const data = JSON.parse(saved);
 photos = data.photos || Array(8).fill(null);
-songs = (data.songs || Array(6).fill(null)).map(song => 
-song ? {name: song.name, data: song.data, file: null} : null
-);
+
+// Şarkıları güvenli yükle
+songs = (data.songs || Array(6).fill(null)).map(song => {
+if (song && song.name && song.data) {
+return {
+name: song.name, 
+data: song.data, 
+file: null,
+size: song.size || 0
+};
+}
+return null;
+});
 currentSongIndex = data.currentSongIndex || -1;
 console.log('✅ Veriler yüklendi:', data.lastSaved);
 return true;
 }
 } catch(e) {
-console.log('❌ Veri yükleme hatası:', e);
+console.error('❌ Veri yükleme hatası:', e);
+// Bozuk veriyi temizle
+localStorage.removeItem('loveStoryData');
+alert('❌ Eski veriler bozuk! Temizlendi, yeniden yükleyin.');
 }
 return false;
 }
@@ -488,6 +528,12 @@ alert('Lütfen geçerli bir ses dosyası seçin!');
 return;
 }
 
+// Dosya boyutu kontrolü (20MB limit)
+if (file.size > 20 * 1024 * 1024) {
+alert('Şarkı dosyası çok büyük! Maksimum 20MB olmalı. Lütfen daha küçük bir dosya seçin.');
+return;
+}
+
 let index = targetIndex;
 if (index === null) {
 index = songs.findIndex(s => s === null);
@@ -499,14 +545,20 @@ return;
 
 const reader = new FileReader();
 reader.onload = function(e) {
+try {
 songs[index] = {
 name: file.name.replace(/\.[^/.]+$/, ""),
 data: e.target.result,
-file: file
+file: file,
+size: file.size
 };
 createSongList();
 saveData(); // GitHub Pages'te otomatik kaydet
-alert(`✅ Şarkı "${songs[index].name}" eklendi ve kaydedildi!`);
+alert(`✅ Şarkı "${songs[index].name}" eklendi ve kaydedildi! (${(file.size/1024/1024).toFixed(1)}MB)`);
+} catch(error) {
+alert('❌ Şarkı kaydedilemedi! Dosya çok büyük olabilir.');
+console.error('Müzik kaydetme hatası:', error);
+}
 };
 reader.readAsDataURL(file);
 }
