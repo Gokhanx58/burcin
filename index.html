@@ -451,7 +451,8 @@ const songFiles = [
 'song4.mp3', 'song5.mp3', 'song6.mp3'
 ];
 
-const baseUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}songs/`;
+// GitHub raw URL'i kullan
+const baseUrl = 'https://raw.githubusercontent.com/GokhanX58/burcin/main/songs/';
 
 songs = [];
 
@@ -462,7 +463,7 @@ const response = await fetch(url, { method: 'HEAD' });
 
 if (response.ok) {
 songs[i] = {
-name: songFiles[i].replace('.mp3', '').replace(/[0-9]/g, '').replace('song', 'Şarkı '),
+name: await getSongNameFromGitHub(songFiles[i]) || `Şarkı ${i + 1}`,
 url: url,
 fromGitHub: true
 };
@@ -481,6 +482,24 @@ loadManualSongs();
 
 createSongList();
 console.log(`🎵 ${songs.filter(s => s).length} şarkı yüklendi`);
+}
+
+// GitHub'dan şarkı adını almaya çalış
+async function getSongNameFromGitHub(filename) {
+try {
+// Dosya adından şarkı adını çıkarmaya çalış
+const songNames = {
+'song1.mp3': 'Kalpte Kalan',
+'song2.mp3': 'Kelebek', 
+'song3.mp3': 'Üç Gökyüzünde',
+'song4.mp3': 'Kal',
+'song5.mp3': 'Biri Ol Diye',
+'song6.mp3': 'Vardır Bir Tripe'
+};
+return songNames[filename] || filename.replace('.mp3', '');
+} catch(e) {
+return filename.replace('.mp3', '');
+}
 }
 
 function loadManualSongs() {
@@ -579,19 +598,32 @@ pauseMusic();
 return;
 }
 
-audioPlayer.src = songs[index].url;
+// GitHub'dan gelen dosyalar için özel işlem
+const songUrl = songs[index].url;
+console.log('🎵 Çalmaya çalışılan şarkı:', songUrl);
+
+audioPlayer.src = songUrl;
 currentSongIndex = index;
 
 document.getElementById('currentSong').textContent = songs[index].name;
 
+// Ses dosyasını yükle ve çal
+audioPlayer.load(); // Önemli: Dosyayı tekrar yükle
 audioPlayer.play().then(() => {
 isPlaying = true;
 document.getElementById('playBtn').textContent = '⏸️';
 createSongList();
+console.log('✅ Şarkı başarıyla çalıyor');
 }).catch(e => {
-alert('Şarkı çalarken hata oluştu: ' + e.message);
-console.error('Çalma hatası:', e);
+console.error('❌ Çalma hatası:', e);
+alert(`❌ "${songs[index].name}" çalarken hata oluştu!\n\nMuhtemel nedenler:\n- Dosya formatı desteklenmiyor\n- İnternet bağlantısı sorunu\n- GitHub sunucu sorunu\n\nFarklı bir şarkı deneyin.`);
 });
+
+// Hata durumunu yakala
+audioPlayer.onerror = function(e) {
+console.error('Audio error:', e);
+alert(`❌ Ses dosyası yüklenemedi: ${songs[index].name}`);
+};
 }
 
 function togglePlay() {
