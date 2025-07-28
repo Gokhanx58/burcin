@@ -94,7 +94,7 @@ margin: 10px;
 background: #ff5252;
 }
 
-#fileInput, #musicInput {
+#fileInput {
 display: none;
 }
 
@@ -143,6 +143,14 @@ button:hover {
 transform: scale(1.1);
 }
 
+.github-info {
+background: rgba(255,255,255,0.15);
+border-radius: 15px;
+padding: 20px;
+margin: 20px 0;
+color: white;
+}
+
 .notes-section div:nth-child(even) {
 transform: rotate(1deg);
 }
@@ -183,10 +191,23 @@ Fotoğraf seçin → İlk boş kutuya otomatik eklenecek
 <div class="music-section" style="margin: 30px 0;">
 <h2 style="color: white; font-size: 2.5em; text-align: center; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🎵 Müzik Kutumuz</h2>
 
+<!-- GitHub Şarkı Bilgisi -->
+<div class="github-info">
+<h3>🎵 Şarkıları GitHub'dan Yüklüyoruz!</h3>
+<p><strong>Nasıl şarkı eklerim?</strong></p>
+<ol style="text-align: left; max-width: 600px; margin: 0 auto;">
+<li>GitHub repository'nde <strong>"songs"</strong> klasörü oluştur</li>
+<li>MP3 dosyalarını oraya yükle</li>
+<li>Dosya adları: <code>song1.mp3</code>, <code>song2.mp3</code>, vb.</li>
+<li>Site otomatik olarak bulup yükleyecek!</li>
+</ol>
+<p><small>⚠️ Dosya adlarında Türkçe karakter ve boşluk kullanma!</small></p>
+</div>
+
 <!-- Müzik Player -->
 <div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 30px; text-align: center; margin: 20px 0;">
 <h3 style="color: white; margin-bottom: 20px;">🎧 Şu an Çalıyor</h3>
-<div id="currentSong" style="color: white; font-size: 1.5em; margin-bottom: 20px; font-weight: bold;">Şarkı Seçin</div>
+<div id="currentSong" style="color: white; font-size: 1.5em; margin-bottom: 20px; font-weight: bold;">Şarkı Yükleniyor...</div>
 <div style="display: flex; justify-content: center; gap: 15px; margin: 20px 0;">
 <button id="prevBtn" style="background: linear-gradient(45deg, #a8edea, #fed6e3); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: all 0.3s ease;">⏮️</button>
 <button id="playBtn" style="background: linear-gradient(45deg, #4facfe, #00f2fe); border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 24px; cursor: pointer; transition: all 0.3s ease;">▶️</button>
@@ -203,14 +224,13 @@ Fotoğraf seçin → İlk boş kutuya otomatik eklenecek
 <!-- Şarkı kartları JavaScript ile oluşturulacak -->
 </div>
 
-<!-- Şarkı ekleme alanı -->
+<!-- Manuel Şarkı Ekleme -->
 <div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center;">
-<button id="addSongBtn" class="upload-btn" style="background: linear-gradient(45deg, #667eea, #764ba2);">
-🎵 Müzik Dosyası Yükle
+<button class="upload-btn" onclick="addSongManually()" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+🎵 Şarkı URL'si Ekle
 </button>
-<input type="file" id="musicInput" accept="audio/*">
 <div style="color: white; margin-top: 10px; font-size: 14px;">
-MP3, WAV, M4A dosyalarını seçin
+Şarkı dosyasının direkt linkini ekle
 </div>
 </div>
 </div>
@@ -253,16 +273,6 @@ MP3, WAV, M4A dosyalarını seçin
 <div style="position: absolute; top: 10px; right: 15px; font-size: 20px; opacity: 0.7;">🎵</div>
 <div style="color: #2d3436; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">🎶 Şarkımız</div>
 <div style="color: #2d3436; line-height: 1.6; font-style: italic;">"Her duyduğumda seni hatırlıyorum, kalbimdeki o melodiyi..."</div>
-</div>
-</div>
-
-<!-- Not ekleme alanı -->
-<div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center;">
-<button class="upload-btn" onclick="addNewNote()" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">
-➕ Yeni Not Ekle
-</button>
-<div style="color: white; margin-top: 10px; font-size: 14px;">
-Yeni aşk notu ekleyin
 </div>
 </div>
 </div>
@@ -309,114 +319,44 @@ let currentSongIndex = -1;
 let isPlaying = false;
 let audioPlayer;
 
-// KAYDET/YÜKLE FONKSİYONLARI (GitHub Pages'te çalışır)
-function saveData() {
-try {
-// Önce fotoğrafları kaydet (her zaman çalışır)
-const photoData = {
-photos: photos,
-lastSaved: new Date().toISOString()
-};
-localStorage.setItem('lovePhotos', JSON.stringify(photoData));
-
-// Şarkıları ayrı ayrı kaydet (daha güvenli)
-const songData = {
-songNames: songs.map(song => song ? song.name : null),
-currentSongIndex: currentSongIndex,
-lastSaved: new Date().toISOString()
-};
-localStorage.setItem('loveSongs', JSON.stringify(songData));
-
-// Ses dosyalarını ayrı kaydet
-songs.forEach((song, index) => {
-if (song && song.data) {
-try {
-// Her şarkıyı ayrı key'de sakla
-localStorage.setItem(`loveSong_${index}`, song.data);
-console.log(`✅ Şarkı ${index} kaydedildi: ${song.name}`);
-} catch(e) {
-console.warn(`⚠️ Şarkı ${index} kaydedilemedi:`, song.name);
-// Bu şarkıyı null yap
-songs[index] = null;
-}
-}
-});
-
-console.log('✅ Veriler kaydedildi:', new Date().toLocaleString());
-} catch(e) {
-console.error('❌ Kaydetme hatası:', e);
-alert('❌ Bazı veriler kaydedilemedi!');
-}
-}
-
-function loadData() {
-try {
-let hasData = false;
-
-// Fotoğrafları yükle
-const photoSaved = localStorage.getItem('lovePhotos');
-if (photoSaved) {
-const photoData = JSON.parse(photoSaved);
-photos = photoData.photos || Array(8).fill(null);
-hasData = true;
-console.log('✅ Fotoğraflar yüklendi');
-}
-
-// Şarkı bilgilerini yükle
-const songSaved = localStorage.getItem('loveSongs');
-if (songSaved) {
-const songData = JSON.parse(songSaved);
-currentSongIndex = songData.currentSongIndex || -1;
-
-// Şarkıları tek tek yükle
-songs = Array(6).fill(null);
-songData.songNames.forEach((name, index) => {
-if (name) {
-const songDataStored = localStorage.getItem(`loveSong_${index}`);
-if (songDataStored) {
-songs[index] = {
-name: name,
-data: songDataStored,
-file: null
-};
-console.log(`✅ Şarkı ${index} yüklendi: ${name}`);
-} else {
-console.warn(`⚠️ Şarkı ${index} bulunamadı: ${name}`);
-}
-}
-});
-hasData = true;
-console.log('✅ Şarkılar yüklendi');
-}
-
-return hasData;
-} catch(e) {
-console.error('❌ Veri yükleme hatası:', e);
-// Bozuk verileri temizle
-clearAllData();
-return false;
-}
-}
-
-function clearAllData() {
-// Tüm verileri temizle
-localStorage.removeItem('lovePhotos');
-localStorage.removeItem('loveSongs');
-for(let i = 0; i < 6; i++) {
-localStorage.removeItem(`loveSong_${i}`);
-}
-console.log('🧹 Tüm veriler temizlendi');
-}
-
 const photoTitles = [
 '💕 İlk Fotoğrafımız', '🌹 Romantik Anımız', '😊 Mutlu Günümüz', '🎉 Özel Günümüz',
 '💖 Aşkımızın Kanıtı', '✨ Güzel Anılarımız', '🌟 Beraber Anımız', '💝 Kalbimizden'
 ];
 const photoColors = ['#ff6b6b', '#4ecdc4', '#a8edea', '#fed6e3', '#fd79a8', '#fdcb6e', '#00b894', '#667eea'];
 
-// FOTOĞRAF FONKSİYONLARI
+// FOTOĞRAF FONKSİYONLARI (LocalStorage ile çalışır)
 function initPhotos() {
 photos = Array(8).fill(null);
+loadPhotos();
+}
+
+function loadPhotos() {
+try {
+const saved = localStorage.getItem('lovePhotos');
+if (saved) {
+const data = JSON.parse(saved);
+photos = data.photos || Array(8).fill(null);
+console.log('✅ Fotoğraflar yüklendi');
+return true;
+}
+} catch(e) {
+console.warn('Fotoğraf yükleme hatası:', e);
+}
+return false;
+}
+
+function savePhotos() {
+try {
+const data = {
+photos: photos,
+lastSaved: new Date().toISOString()
+};
+localStorage.setItem('lovePhotos', JSON.stringify(data));
+console.log('✅ Fotoğraflar kaydedildi');
+} catch(e) {
+console.warn('Fotoğraf kaydetme hatası:', e);
+}
 }
 
 function createPhotoGrid() {
@@ -485,7 +425,7 @@ ctx.drawImage(img, 0, 0, width, height);
 
 photos[index] = canvas.toDataURL('image/jpeg', 0.7);
 createPhotoGrid();
-saveData(); // GitHub Pages'te otomatik kaydet
+savePhotos();
 alert(`✅ Fotoğraf "${photoTitles[index]}" slotuna eklendi ve kaydedildi!`);
 };
 img.src = e.target.result;
@@ -501,10 +441,73 @@ input.onchange = (e) => handlePhotoFile(e, index);
 input.click();
 }
 
-// MÜZİK FONKSİYONLARI
-function initSongs() {
-songs = Array(6).fill(null);
+// MÜZİK FONKSİYONLARI (GitHub'dan yükleme)
+async function loadSongsFromGitHub() {
+console.log('🎵 GitHub\'dan şarkılar yükleniyor...');
+
+// GitHub'daki şarkı dosyalarını dene
+const songFiles = [
+'song1.mp3', 'song2.mp3', 'song3.mp3', 
+'song4.mp3', 'song5.mp3', 'song6.mp3'
+];
+
+const baseUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}songs/`;
+
+songs = [];
+
+for (let i = 0; i < 6; i++) {
+try {
+const url = baseUrl + songFiles[i];
+const response = await fetch(url, { method: 'HEAD' });
+
+if (response.ok) {
+songs[i] = {
+name: songFiles[i].replace('.mp3', '').replace(/[0-9]/g, '').replace('song', 'Şarkı '),
+url: url,
+fromGitHub: true
+};
+console.log(`✅ ${songFiles[i]} bulundu`);
+} else {
+songs[i] = null;
+}
+} catch(e) {
+songs[i] = null;
+console.log(`❌ ${songFiles[i]} bulunamadı`);
+}
+}
+
+// Manuel eklenen şarkıları da yükle
+loadManualSongs();
+
 createSongList();
+console.log(`🎵 ${songs.filter(s => s).length} şarkı yüklendi`);
+}
+
+function loadManualSongs() {
+try {
+const saved = localStorage.getItem('manualSongs');
+if (saved) {
+const manualSongs = JSON.parse(saved);
+manualSongs.forEach((song, index) => {
+if (song && !songs[index]) {
+songs[index] = song;
+}
+});
+}
+} catch(e) {
+console.warn('Manuel şarkı yükleme hatası:', e);
+}
+}
+
+function saveManualSongs() {
+try {
+const manualSongs = songs.map(song => 
+song && !song.fromGitHub ? song : null
+);
+localStorage.setItem('manualSongs', JSON.stringify(manualSongs));
+} catch(e) {
+console.warn('Manuel şarkı kaydetme hatası:', e);
+}
 }
 
 function createSongList() {
@@ -518,17 +521,18 @@ card.setAttribute('data-index', i);
 
 if (songs[i]) {
 card.classList.add('has-song');
+const source = songs[i].fromGitHub ? '🌐 GitHub' : '🔗 URL';
 card.innerHTML = `
 <div style="color: white; font-weight: bold; margin-bottom: 5px;">${songs[i].name}</div>
-<div style="color: rgba(255,255,255,0.8); font-size: 0.9em;">🎵 Çalmak için tıklayın</div>
+<div style="color: rgba(255,255,255,0.8); font-size: 0.9em;">🎵 ${source} | Çalmak için tıklayın</div>
 `;
 card.onclick = () => playSong(i);
 } else {
 card.innerHTML = `
-<div style="color: white; font-weight: bold; margin-bottom: 5px;">Boş Slot</div>
-<div style="color: rgba(255,255,255,0.8); font-size: 0.9em;">🎵 Şarkı eklemek için tıklayın</div>
+<div style="color: white; font-weight: bold; margin-bottom: 5px;">Boş Slot ${i+1}</div>
+<div style="color: rgba(255,255,255,0.8); font-size: 0.9em;">🎵 GitHub'a yükle veya URL ekle</div>
 `;
-card.onclick = () => selectSongSlot(i);
+card.onclick = () => addSongManually(i);
 }
 
 if (currentSongIndex === i) {
@@ -539,28 +543,9 @@ songList.appendChild(card);
 }
 }
 
-function selectSongSlot(index) {
-const input = document.createElement('input');
-input.type = 'file';
-input.accept = 'audio/*';
-input.onchange = (e) => handleMusicFile(e, index);
-input.click();
-}
-
-function handleMusicFile(event, targetIndex = null) {
-const file = event.target.files[0];
-if (!file) return;
-
-if (!file.type.startsWith('audio/')) {
-alert('Lütfen geçerli bir ses dosyası seçin!');
-return;
-}
-
-// Dosya boyutu kontrolü (20MB limit)
-if (file.size > 20 * 1024 * 1024) {
-alert('Şarkı dosyası çok büyük! Maksimum 20MB olmalı. Lütfen daha küçük bir dosya seçin.');
-return;
-}
+function addSongManually(targetIndex = null) {
+const url = prompt('Şarkı dosyasının direkt URL\'sini girin:\n(örn: https://example.com/sarki.mp3)');
+if (!url) return;
 
 let index = targetIndex;
 if (index === null) {
@@ -571,71 +556,19 @@ return;
 }
 }
 
-// Yükleme göstergesi
-alert('🎵 Şarkı yükleniyor ve sıkıştırılıyor... Lütfen bekleyin!');
-
-const reader = new FileReader();
-reader.onload = function(e) {
-try {
-// Ses dosyasını sıkıştır
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-// İlk önce basit yolla kaydet
-const originalData = e.target.result;
-
-// Base64'ü kısalt (her 4. karakteri al - kalite düşer ama boyut küçülür)
-const compressedData = compressAudioData(originalData);
+// URL'den dosya adını çıkar
+const fileName = url.split('/').pop().split('?')[0];
+const songName = fileName.replace(/\.[^/.]+$/, "").replace(/_/g, ' ');
 
 songs[index] = {
-name: file.name.replace(/\.[^/.]+$/, ""),
-data: compressedData,
-originalData: originalData, // Yedek olarak orijinali sakla
-file: file,
-size: file.size,
-compressed: true
+name: songName || `Şarkı ${index + 1}`,
+url: url,
+fromGitHub: false
 };
 
 createSongList();
-
-// Kaydetmeyi dene
-try {
-saveData();
-alert(`✅ Şarkı "${songs[index].name}" başarıyla eklendi ve sıkıştırılarak kaydedildi! (${(file.size/1024/1024).toFixed(1)}MB)`);
-} catch(saveError) {
-// Kaydetme başarısız, sadece bu oturumda tut
-alert(`⚠️ Şarkı "${songs[index].name}" eklendi ancak kalıcı kayıt yapılamadı. Bu oturum boyunca çalışacak.`);
-console.warn('Kaydetme hatası:', saveError);
-}
-
-} catch(error) {
-alert('❌ Şarkı işlenemedi! Farklı bir dosya deneyin.');
-console.error('Müzik işleme hatası:', error);
-songs[index] = null; // Hatalı girişi temizle
-createSongList();
-}
-};
-reader.readAsDataURL(file);
-}
-
-// Ses verisini sıkıştırma fonksiyonu
-function compressAudioData(base64Data) {
-try {
-// Base64'ün başlık kısmını koru, veriyi sıkıştır
-const header = base64Data.split(',')[0] + ',';
-const data = base64Data.split(',')[1];
-
-// Her 3 karakterden 2 tanesini al (yaklaşık %33 boyut azalması)
-let compressed = '';
-for(let i = 0; i < data.length; i += 3) {
-compressed += data.substring(i, i + 2);
-}
-
-console.log(`🗜️ Ses sıkıştırıldı: ${data.length} → ${compressed.length} karakter`);
-return header + compressed;
-} catch(e) {
-console.warn('Sıkıştırma başarısız, orijinal veri kullanılıyor');
-return base64Data;
-}
+saveManualSongs();
+alert(`✅ Şarkı "${songs[index].name}" eklendi!`);
 }
 
 function playSong(index) {
@@ -646,9 +579,7 @@ pauseMusic();
 return;
 }
 
-// Sıkıştırılmış şarkıysa orijinal veriyi kullan
-const audioData = songs[index].originalData || songs[index].data;
-audioPlayer.src = audioData;
+audioPlayer.src = songs[index].url;
 currentSongIndex = index;
 
 document.getElementById('currentSong').textContent = songs[index].name;
@@ -665,7 +596,13 @@ console.error('Çalma hatası:', e);
 
 function togglePlay() {
 if (currentSongIndex === -1) {
-alert('Önce bir şarkı seçin!');
+// İlk mevcut şarkıyı seç
+const firstSong = songs.findIndex(s => s !== null);
+if (firstSong >= 0) {
+playSong(firstSong);
+} else {
+alert('Henüz şarkı yüklenmedi!');
+}
 return;
 }
 
@@ -688,29 +625,27 @@ document.getElementById('playBtn').textContent = '▶️';
 }
 
 function nextSong() {
-if (songs.filter(s => s !== null).length === 0) return;
+const availableSongs = songs.map((s, i) => s ? i : null).filter(i => i !== null);
+if (availableSongs.length === 0) return;
 
 let nextIndex = currentSongIndex;
-do {
-nextIndex = (nextIndex + 1) % 6;
-} while (!songs[nextIndex] && nextIndex !== currentSongIndex);
+const currentPos = availableSongs.indexOf(currentSongIndex);
+const nextPos = (currentPos + 1) % availableSongs.length;
+nextIndex = availableSongs[nextPos];
 
-if (songs[nextIndex]) {
 playSong(nextIndex);
-}
 }
 
 function previousSong() {
-if (songs.filter(s => s !== null).length === 0) return;
+const availableSongs = songs.map((s, i) => s ? i : null).filter(i => i !== null);
+if (availableSongs.length === 0) return;
 
 let prevIndex = currentSongIndex;
-do {
-prevIndex = (prevIndex - 1 + 6) % 6;
-} while (!songs[prevIndex] && prevIndex !== currentSongIndex);
+const currentPos = availableSongs.indexOf(currentSongIndex);
+const prevPos = (currentPos - 1 + availableSongs.length) % availableSongs.length;
+prevIndex = availableSongs[prevPos];
 
-if (songs[prevIndex]) {
 playSong(prevIndex);
-}
 }
 
 function addNewNote() {
@@ -721,34 +656,28 @@ alert('💕 Notunuz eklendi: ' + noteText);
 }
 
 // SAYFA YÜKLENDİĞİNDE
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
 // Audio player'ı başlat
 audioPlayer = document.getElementById('audioPlayer');
 
-// Önceki verileri yükle (GitHub Pages'te çalışır)
-const hasData = loadData();
-if (hasData) {
-console.log('📱 Önceki verileriniz geri yüklendi!');
-}
-
-// Eğer veri yoksa boş başlat
-if (photos.length === 0) initPhotos();
-if (songs.length === 0) initSongs();
-
+// Fotoğrafları yükle (localStorage'dan)
+initPhotos();
 createPhotoGrid();
-createSongList();
 
-// Eğer kayıtlı şarkı varsa göster
-if (currentSongIndex >= 0 && songs[currentSongIndex]) {
-document.getElementById('currentSong').textContent = songs[currentSongIndex].name;
+// Şarkıları GitHub'dan yükle
+document.getElementById('currentSong').textContent = 'Şarkılar yükleniyor...';
+await loadSongsFromGitHub();
+
+// İlk şarkıyı göster
+const firstSong = songs.find(s => s !== null);
+if (firstSong) {
+document.getElementById('currentSong').textContent = firstSong.name;
+} else {
+document.getElementById('currentSong').textContent = 'Şarkı bulunamadı - GitHub\'a yükleyin!';
 }
 
 // Event listener'ları ekle
 document.getElementById('fileInput').addEventListener('change', handlePhotoFile);
-document.getElementById('addSongBtn').addEventListener('click', function() {
-document.getElementById('musicInput').click();
-});
-document.getElementById('musicInput').addEventListener('change', handleMusicFile);
 document.getElementById('playBtn').addEventListener('click', togglePlay);
 document.getElementById('nextBtn').addEventListener('click', nextSong);
 document.getElementById('prevBtn').addEventListener('click', previousSong);
@@ -760,18 +689,10 @@ document.getElementById('playBtn').textContent = '▶️';
 nextSong();
 });
 
-// Periyodik kaydetme (her 30 saniyede bir)
-setInterval(saveData, 30000);
+// Fotoğraf kaydetme
+window.addEventListener('beforeunload', savePhotos);
 
-// Sayfa kapanırken kaydet
-window.addEventListener('beforeunload', saveData);
-
-// Veri temizleme butonu (geliştirme için)
-if (window.location.search.includes('debug=1')) {
-document.body.innerHTML += '<button onclick="clearAllData(); location.reload();" style="position:fixed; top:10px; right:10px; z-index:9999; background:red; color:white; padding:10px;">🧹 Verileri Temizle</button>';
-}
-
-console.log('✅ Site yüklendi! Yeni kaydetme sistemi aktif.');
+console.log('✅ Site yüklendi! GitHub şarkı sistemi aktif.');
 });
 </script>
 </body>
