@@ -43,69 +43,16 @@ justify-content: center;
 color: white;
 font-size: 24px;
 font-weight: bold;
-cursor: pointer;
+cursor: default;
 transition: transform 0.3s;
 text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
 background-size: cover;
 background-position: center;
-position: relative;
 }
 
 .photo-box:hover {
 transform: scale(1.05);
 }
-
-.photo-box.has-photo {
-color: transparent;
-}
-
-.photo-box.has-photo:hover::after {
-content: '🔄 Değiştir';
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-background: rgba(0,0,0,0.7);
-padding: 10px 20px;
-border-radius: 20px;
-color: white;
-font-size: 16px;
-}
-
-.upload-area {
-background: rgba(255,255,255,0.2);
-padding: 20px;
-border-radius: 15px;
-margin: 20px 0;
-}
-
-.upload-btn {
-background: #ff6b6b;
-color: white;
-border: none;
-padding: 15px 30px;
-border-radius: 25px;
-font-size: 18px;
-cursor: pointer;
-margin: 10px;
-}
-
-.upload-btn:hover {
-background: #ff5252;
-}
-
-#fileInput {
-display: none;
-}
-
-.red { background: #ff6b6b; }
-.blue { background: #4ecdc4; }
-.green { background: #a8edea; }
-.pink { background: #fed6e3; }
-.purple { background: #fd79a8; }
-.orange { background: #fdcb6e; }
-.teal { background: #00b894; }
-.indigo { background: #667eea; }
 
 .message {
 background: rgba(255,255,255,0.2);
@@ -116,39 +63,8 @@ font-size: 18px;
 margin: 20px 0;
 }
 
-.song-card {
-background: rgba(255,255,255,0.2);
-border-radius: 10px;
-padding: 15px;
-cursor: pointer;
-transition: all 0.3s ease;
-text-align: center;
-}
-
-.song-card:hover {
-background: rgba(255,255,255,0.3) !important;
-transform: translateY(-2px);
-}
-
-.song-card.playing {
-background: rgba(255,255,255,0.4) !important;
-border: 2px solid #4ecdc4;
-}
-
-.song-card.has-song {
-background: rgba(76, 175, 80, 0.3);
-}
-
 button:hover {
 transform: scale(1.1);
-}
-
-.github-info {
-background: rgba(255,255,255,0.15);
-border-radius: 15px;
-padding: 20px;
-margin: 20px 0;
-color: white;
 }
 
 .notes-section div:nth-child(even) {
@@ -173,27 +89,39 @@ transform: rotate(0deg) scale(1.02) !important;
 🎨 Fotoğraf galerimiz
 </div>
 
-<!-- FOTOĞRAF YÜKLEME BUTONU KALDIRILDI -->
-
-<div class="photo-grid" id="photoGrid">
-<!-- Fotoğraflar buraya yüklenecek -->
+<div class="photo-grid">
+<!-- FOTOĞRAFLAR - GITHUB'DAKİ GERÇEK LİNKLER -->
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/9.jpg?raw=true'); background-size: cover; background-position: center;"></div>
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/10.png?raw=true'); background-size: cover; background-position: center;"></div>
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/11.png?raw=true'); background-size: cover; background-position: center;"></div>
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/12.png?raw=true'); background-size: cover; background-position: center;"></div>
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/7.png?raw=true'); background-size: cover; background-position: center;"></div>
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/-6010583414383690221_121.jpg?raw=true'); background-size: cover; background-position: center;"></div>
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/photo_5929181917129853425_y.jpg?raw=true'); background-size: cover; background-position: center;"></div>
+<div class="photo-box" style="background-image: url('https://github.com/GokhanX58/burcin/blob/main/photo_5929181917129853426_y.jpg?raw=true'); background-size: cover; background-position: center;"></div>
 </div>
 
-<!-- OTOMATİK ÇALAN MÜZİK -->
+<!-- MÜZİK BÖLÜMÜ -->
 <div class="music-section" style="margin: 30px 0;">
 <h2 style="color: white; font-size: 2.5em; text-align: center; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🎵 Aşkımızın Şarkısı</h2>
 
-<!-- Basit Müzik Player -->
 <div style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 30px; text-align: center; margin: 20px 0;">
 <h3 style="color: white; margin-bottom: 20px;">🎧 Şu an Çalıyor</h3>
-<div id="currentSong" style="color: white; font-size: 1.5em; margin-bottom: 20px; font-weight: bold;">Aşk Şarkımız 💕</div>
+<div style="color: white; font-size: 1.5em; margin-bottom: 20px; font-weight: bold;">Aşk Şarkımız 💕</div>
 <div style="display: flex; justify-content: center; gap: 15px; margin: 20px 0;">
-<button id="playBtn" onclick="toggleMusic()" style="background: linear-gradient(45deg, #4facfe, #00f2fe); border: none; width: 80px; height: 80px; border-radius: 50%; font-size: 30px; cursor: pointer; transition: all 0.3s ease;">▶️</button>
+<button onclick="playMusic()" style="background: linear-gradient(45deg, #4facfe, #00f2fe); border: none; width: 80px; height: 80px; border-radius: 50%; font-size: 30px; cursor: pointer; transition: all 0.3s ease;">▶️</button>
 </div>
 <div style="color: rgba(255,255,255,0.8); font-size: 14px;">
-🎶 Kalplerimizin melodisi - Otomatik çalar
+🎶 Çalmak için ▶️ tıklayın
 </div>
-<audio id="audioPlayer" loop></audio>
+
+<!-- MÜZİK PLAYER -->
+<audio controls loop style="width: 100%; margin-top: 20px;">
+<source src="https://drive.google.com/uc?export=download&id=1qaHiXLqtp6R9pFeoEw0BJkjc18ts2R9v" type="audio/mpeg">
+<source src="https://github.com/GokhanX58/burcin/raw/main/songs/song1.mp3" type="audio/mpeg">
+<source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+Tarayıcınız ses dosyalarını desteklemiyor.
+</audio>
 </div>
 </div>
 
@@ -274,240 +202,14 @@ transform: rotate(0deg) scale(1.02) !important;
 </div>
 
 <script>
-// GLOBAL DEĞİŞKENLER
-let photos = [];
-
-const photoTitles = [
-'💕 İlk Fotoğrafımız', '🌹 Romantik Anımız', '😊 Mutlu Günümüz', '🎉 Özel Günümüz',
-'💖 Aşkımızın Kanıtı', '✨ Güzel Anılarımız', '🌟 Beraber Anımız', '💝 Kalbimizden'
-];
-const photoColors = ['#ff6b6b', '#4ecdc4', '#a8edea', '#fed6e3', '#fd79a8', '#fdcb6e', '#00b894', '#667eea'];
-
-// SABIT FOTOĞRAFLAR - GitHub'dan yüklenecek (DOĞRU dosya adları)
-const PHOTO_URLS = [
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/9.jpg', // İlk Fotoğrafımız
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/10.png', // Romantik Anımız
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/11.png', // Mutlu Günümüz
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/12.png', // Özel Günümüz
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/7.png', // Aşkımızın Kanıtı
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/-6010583414383690221_121.jpg', // Güzel Anılarımız
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/photo_5929181917129853425_y.jpg', // Beraber Anımız
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/photo_5929181917129853426_y.jpg' // Kalbimizden
-];
-
-// FOTOĞRAF FONKSİYONLARI 
-function initPhotos() {
-photos = PHOTO_URLS; // Sabit URL'leri kullan
-}
-
-function createPhotoGrid() {
-const grid = document.getElementById('photoGrid');
-grid.innerHTML = '';
-
-for (let i = 0; i < 8; i++) {
-const box = document.createElement('div');
-box.className = 'photo-box';
-
-// GitHub'dan fotoğraf yükle
-if (photos[i]) {
-box.style.backgroundImage = `url(${photos[i]})`;
-box.classList.add('has-photo');
+function playMusic() {
+const audio = document.querySelector('audio');
+if (audio.paused) {
+audio.play();
 } else {
-// Fotoğraf yoksa renkli kutu göster
-box.style.background = photoColors[i];
-box.innerHTML = photoTitles[i].replace(' ', '<br>');
-}
-
-box.style.cursor = 'default'; // Tıklanamaz
-
-grid.appendChild(box);
+audio.pause();
 }
 }
-
-// FOTOĞRAF FONKSİYONLARI (LocalStorage ile çalışır)
-function initPhotos() {
-photos = Array(8).fill(null);
-loadPhotos();
-}
-
-function loadPhotos() {
-try {
-const saved = localStorage.getItem('lovePhotos');
-if (saved) {
-const data = JSON.parse(saved);
-photos = data.photos || Array(8).fill(null);
-console.log('✅ Fotoğraflar yüklendi');
-return true;
-}
-} catch(e) {
-console.warn('Fotoğraf yükleme hatası:', e);
-}
-return false;
-}
-
-function savePhotos() {
-try {
-const data = {
-photos: photos,
-lastSaved: new Date().toISOString()
-};
-localStorage.setItem('lovePhotos', JSON.stringify(data));
-console.log('✅ Fotoğraflar kaydedildi');
-} catch(e) {
-console.warn('Fotoğraf kaydetme hatası:', e);
-}
-}
-
-function createPhotoGrid() {
-const grid = document.getElementById('photoGrid');
-grid.innerHTML = '';
-
-for (let i = 0; i < 8; i++) {
-const box = document.createElement('div');
-box.className = 'photo-box';
-
-if (photos[i]) {
-box.style.backgroundImage = `url(${photos[i]})`;
-box.classList.add('has-photo');
-box.onclick = () => changePhoto(i);
-} else {
-box.style.background = photoColors[i];
-box.innerHTML = photoTitles[i].replace(' ', '<br>');
-box.onclick = () => selectPhotoSlot(i);
-}
-
-grid.appendChild(box);
-}
-}
-
-function selectPhotoSlot(index) {
-const input = document.createElement('input');
-input.type = 'file';
-input.accept = 'image/*';
-input.onchange = (e) => handlePhotoFile(e, index);
-input.click();
-}
-
-function handlePhotoFile(event, targetIndex = null) {
-const file = event.target.files[0];
-if (!file) return;
-
-let index = targetIndex;
-if (index === null) {
-index = photos.findIndex(p => p === null);
-if (index === -1) {
-alert('Tüm fotoğraf slotları dolu! Önce bir fotoğrafı değiştirin.');
-return;
-}
-}
-
-const reader = new FileReader();
-reader.onload = function(e) {
-const img = new Image();
-img.onload = function() {
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
-
-let { width, height } = img;
-const maxWidth = 300;
-const maxHeight = 200;
-
-if (width > maxWidth || height > maxHeight) {
-const ratio = Math.min(maxWidth / width, maxHeight / height);
-width = width * ratio;
-height = height * ratio;
-}
-
-canvas.width = width;
-canvas.height = height;
-ctx.drawImage(img, 0, 0, width, height);
-
-photos[index] = canvas.toDataURL('image/jpeg', 0.7);
-createPhotoGrid();
-savePhotos();
-alert(`✅ Fotoğraf "${photoTitles[index]}" slotuna eklendi ve kaydedildi!`);
-};
-img.src = e.target.result;
-};
-reader.readAsDataURL(file);
-}
-
-function changePhoto(index) {
-const input = document.createElement('input');
-input.type = 'file';
-input.accept = 'image/*';
-input.onchange = (e) => handlePhotoFile(e, index);
-input.click();
-}
-let isPlaying = false;
-let audioPlayer;
-
-// ŞARKI URL'İNİ BURAYA KOYACAĞIZ - ÇALIŞAN LİNK
-const SONG_URL = "https://we.tl/t-CTlwRR4TcV"; // WeTransfer linki
-
-function toggleMusic() {
-const playBtn = document.getElementById('playBtn');
-
-if (isPlaying) {
-audioPlayer.pause();
-isPlaying = false;
-playBtn.textContent = '▶️';
-document.getElementById('currentSong').innerHTML = 'Aşk Şarkımız 💕<br><small>Durduruldu</small>';
-} else {
-// İlk tıklamada müziği başlat
-audioPlayer.play().then(() => {
-isPlaying = true;
-playBtn.textContent = '⏸️';
-document.getElementById('currentSong').innerHTML = 'Aşk Şarkımız 💕<br><small style="color: #4caf50;">🎵 Çalıyor...</small>';
-console.log('✅ Müzik başladı (kullanıcı tıkladı)');
-}).catch(e => {
-console.error('❌ Çalma hatası:', e);
-document.getElementById('currentSong').innerHTML = 'Müzik hatası 😞<br><small>Farklı tarayıcı deneyin</small>';
-});
-}
-}
-
-function startAutoMusic() {
-console.log('🎵 Müzik başlatılıyor:', SONG_URL);
-audioPlayer.src = SONG_URL;
-audioPlayer.volume = 0.5;
-audioPlayer.loop = true;
-
-// Kullanıcı tıklaması bekleniyor mesajı
-document.getElementById('currentSong').innerHTML = 'Aşk Şarkımız 💕<br><small style="color: #ffeb3b;">🎵 Çalmak için ▶️ tıklayın</small>';
-
-// Otomatik çalma artık çalışmıyor, kullanıcı tıklamalı
-audioPlayer.onloadeddata = function() {
-console.log('✅ Müzik dosyası hazır - kullanıcı tıklayabilir');
-};
-
-audioPlayer.onerror = function(e) {
-console.error('❌ Müzik yükleme hatası:', e);
-document.getElementById('currentSong').innerHTML = 'Müzik sorunu 😞<br><small>Lütfen ▶️ butonunu deneyin</small>';
-};
-}
-
-function addNewNote() {
-const noteText = prompt('Yeni aşk notunuzu yazın:');
-if (noteText && noteText.trim()) {
-alert('💕 Notunuz eklendi: ' + noteText);
-}
-}
-
-// SAYFA YÜKLENDİĞİNDE
-document.addEventListener('DOMContentLoaded', function() {
-// Audio player'ı başlat
-audioPlayer = document.getElementById('audioPlayer');
-
-// Fotoğrafları yükle
-initPhotos();
-createPhotoGrid();
-
-// Müziği başlat
-startAutoMusic();
-
-console.log('✅ Site yüklendi! Fotoğraflar ve müzik hazır.');
-});
 </script>
 </body>
 </html>
