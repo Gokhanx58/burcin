@@ -170,18 +170,10 @@ transform: rotate(0deg) scale(1.02) !important;
 <h1>💕 Bizim Aşk Hikayemiz 💕</h1>
 
 <div class="message">
-🎨 Fotoğraf galerimiz - Her karta tıklayın!
+🎨 Fotoğraf galerimiz
 </div>
 
-<div class="upload-area">
-<button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-📷 Fotoğraf Yükle
-</button>
-<input type="file" id="fileInput" accept="image/*">
-<div style="color: white; margin-top: 10px;">
-Fotoğraf seçin → İlk boş kutuya otomatik eklenecek
-</div>
-</div>
+<!-- FOTOĞRAF YÜKLEME BUTONU KALDIRILDI -->
 
 <div class="photo-grid" id="photoGrid">
 <!-- Fotoğraflar buraya yüklenecek -->
@@ -336,11 +328,13 @@ box.className = 'photo-box';
 if (photos[i]) {
 box.style.backgroundImage = `url(${photos[i]})`;
 box.classList.add('has-photo');
-box.onclick = () => changePhoto(i);
+// TIKLAMA DEVRE DIŞI - Kimse değiştiremesin
+box.style.cursor = 'default';
 } else {
 box.style.background = photoColors[i];
 box.innerHTML = photoTitles[i].replace(' ', '<br>');
-box.onclick = () => selectPhotoSlot(i);
+// BOŞ KARTLAR DA TIKLANAMIYOR
+box.style.cursor = 'default';
 }
 
 grid.appendChild(box);
@@ -580,13 +574,7 @@ createPhotoGrid();
 // Müziği başlat
 startAutoMusic();
 
-// Fotoğraf yükleme
-document.getElementById('fileInput').addEventListener('change', handlePhotoFile);
-
-// Fotoğraf kaydetme
-window.addEventListener('beforeunload', savePhotos);
-
-console.log('✅ Site yüklendi! Basit müzik sistemi aktif.');
+console.log('✅ Site yüklendi! Fotoğraflar ve müzik hazır.');
 });
 </script>
 </body>
