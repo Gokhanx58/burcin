@@ -283,38 +283,21 @@ const photoTitles = [
 ];
 const photoColors = ['#ff6b6b', '#4ecdc4', '#a8edea', '#fed6e3', '#fd79a8', '#fdcb6e', '#00b894', '#667eea'];
 
-// FOTOĞRAF FONKSİYONLARI (LocalStorage ile çalışır)
+// SABIT FOTOĞRAFLAR - GitHub'dan yüklenecek (DOĞRU dosya adları)
+const PHOTO_URLS = [
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/9.jpg', // İlk Fotoğrafımız
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/10.png', // Romantik Anımız
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/11.png', // Mutlu Günümüz
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/12.png', // Özel Günümüz
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/7.png', // Aşkımızın Kanıtı
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/-6010583414383690221_121.jpg', // Güzel Anılarımız
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/photo_5929181917129853425_y.jpg', // Beraber Anımız
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/photo_5929181917129853426_y.jpg' // Kalbimizden
+];
+
+// FOTOĞRAF FONKSİYONLARI 
 function initPhotos() {
-photos = Array(8).fill(null);
-loadPhotos();
-}
-
-function loadPhotos() {
-try {
-const saved = localStorage.getItem('lovePhotos');
-if (saved) {
-const data = JSON.parse(saved);
-photos = data.photos || Array(8).fill(null);
-console.log('✅ Fotoğraflar yüklendi');
-return true;
-}
-} catch(e) {
-console.warn('Fotoğraf yükleme hatası:', e);
-}
-return false;
-}
-
-function savePhotos() {
-try {
-const data = {
-photos: photos,
-lastSaved: new Date().toISOString()
-};
-localStorage.setItem('lovePhotos', JSON.stringify(data));
-console.log('✅ Fotoğraflar kaydedildi');
-} catch(e) {
-console.warn('Fotoğraf kaydetme hatası:', e);
-}
+photos = PHOTO_URLS; // Sabit URL'leri kullan
 }
 
 function createPhotoGrid() {
@@ -325,80 +308,20 @@ for (let i = 0; i < 8; i++) {
 const box = document.createElement('div');
 box.className = 'photo-box';
 
+// GitHub'dan fotoğraf yükle
 if (photos[i]) {
 box.style.backgroundImage = `url(${photos[i]})`;
 box.classList.add('has-photo');
-// TIKLAMA DEVRE DIŞI - Kimse değiştiremesin
-box.style.cursor = 'default';
 } else {
+// Fotoğraf yoksa renkli kutu göster
 box.style.background = photoColors[i];
 box.innerHTML = photoTitles[i].replace(' ', '<br>');
-// BOŞ KARTLAR DA TIKLANAMIYOR
-box.style.cursor = 'default';
 }
+
+box.style.cursor = 'default'; // Tıklanamaz
 
 grid.appendChild(box);
 }
-}
-
-function selectPhotoSlot(index) {
-const input = document.createElement('input');
-input.type = 'file';
-input.accept = 'image/*';
-input.onchange = (e) => handlePhotoFile(e, index);
-input.click();
-}
-
-function handlePhotoFile(event, targetIndex = null) {
-const file = event.target.files[0];
-if (!file) return;
-
-let index = targetIndex;
-if (index === null) {
-index = photos.findIndex(p => p === null);
-if (index === -1) {
-alert('Tüm fotoğraf slotları dolu! Önce bir fotoğrafı değiştirin.');
-return;
-}
-}
-
-const reader = new FileReader();
-reader.onload = function(e) {
-const img = new Image();
-img.onload = function() {
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
-
-let { width, height } = img;
-const maxWidth = 300;
-const maxHeight = 200;
-
-if (width > maxWidth || height > maxHeight) {
-const ratio = Math.min(maxWidth / width, maxHeight / height);
-width = width * ratio;
-height = height * ratio;
-}
-
-canvas.width = width;
-canvas.height = height;
-ctx.drawImage(img, 0, 0, width, height);
-
-photos[index] = canvas.toDataURL('image/jpeg', 0.7);
-createPhotoGrid();
-savePhotos();
-alert(`✅ Fotoğraf "${photoTitles[index]}" slotuna eklendi ve kaydedildi!`);
-};
-img.src = e.target.result;
-};
-reader.readAsDataURL(file);
-}
-
-function changePhoto(index) {
-const input = document.createElement('input');
-input.type = 'file';
-input.accept = 'image/*';
-input.onchange = (e) => handlePhotoFile(e, index);
-input.click();
 }
 
 // FOTOĞRAF FONKSİYONLARI (LocalStorage ile çalışır)
@@ -519,8 +442,8 @@ input.click();
 let isPlaying = false;
 let audioPlayer;
 
-// ŞARKI URL'İNİ BURAYA KOYACAĞIZ
-const SONG_URL = "https://drive.google.com/uc?export=download&id=1qaHiXLqtp6R9pFeoEw0BJkjc18ts2R9v"; // Düzeltilmiş Google Drive linki
+// ŞARKI URL'İNİ BURAYA KOYACAĞIZ - ÇALIŞAN LİNK
+const SONG_URL = "https://we.tl/t-CTlwRR4TcV"; // WeTransfer linki
 
 function toggleMusic() {
 const playBtn = document.getElementById('playBtn');
@@ -529,30 +452,39 @@ if (isPlaying) {
 audioPlayer.pause();
 isPlaying = false;
 playBtn.textContent = '▶️';
+document.getElementById('currentSong').innerHTML = 'Aşk Şarkımız 💕<br><small>Durduruldu</small>';
 } else {
-audioPlayer.play();
+// İlk tıklamada müziği başlat
+audioPlayer.play().then(() => {
 isPlaying = true;
 playBtn.textContent = '⏸️';
+document.getElementById('currentSong').innerHTML = 'Aşk Şarkımız 💕<br><small style="color: #4caf50;">🎵 Çalıyor...</small>';
+console.log('✅ Müzik başladı (kullanıcı tıkladı)');
+}).catch(e => {
+console.error('❌ Çalma hatası:', e);
+document.getElementById('currentSong').innerHTML = 'Müzik hatası 😞<br><small>Farklı tarayıcı deneyin</small>';
+});
 }
 }
 
 function startAutoMusic() {
-if (SONG_URL !== "ŞARKI_URL_BURAYA") {
+console.log('🎵 Müzik başlatılıyor:', SONG_URL);
 audioPlayer.src = SONG_URL;
+audioPlayer.volume = 0.5;
+audioPlayer.loop = true;
 
-// 3 saniye sonra otomatik başlat
-setTimeout(() => {
-audioPlayer.play().then(() => {
-isPlaying = true;
-document.getElementById('playBtn').textContent = '⏸️';
-console.log('🎵 Şarkı otomatik başladı!');
-}).catch(e => {
-console.log('⚠️ Otomatik çalma engellendi, kullanıcı play butonuna basabilir');
-});
-}, 3000);
-} else {
-document.getElementById('currentSong').textContent = 'Şarkı URL\'si bekleniyor...';
-}
+// Kullanıcı tıklaması bekleniyor mesajı
+document.getElementById('currentSong').innerHTML = 'Aşk Şarkımız 💕<br><small style="color: #ffeb3b;">🎵 Çalmak için ▶️ tıklayın</small>';
+
+// Otomatik çalma artık çalışmıyor, kullanıcı tıklamalı
+audioPlayer.onloadeddata = function() {
+console.log('✅ Müzik dosyası hazır - kullanıcı tıklayabilir');
+};
+
+audioPlayer.onerror = function(e) {
+console.error('❌ Müzik yükleme hatası:', e);
+document.getElementById('currentSong').innerHTML = 'Müzik sorunu 😞<br><small>Lütfen ▶️ butonunu deneyin</small>';
+};
 }
 
 function addNewNote() {
