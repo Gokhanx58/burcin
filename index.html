@@ -778,40 +778,59 @@ var seconds = Math.floor(time % 60);
 return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
-// Load photos
+// Load photos - DÜZELTME
 function loadPhotos() {
 var photoGrid = document.getElementById('photoGrid');
 photoGrid.innerHTML = '';
 
-for (var i = 1; i <= 10; i++) {
+var photoFiles = [
+'1.png', '10.png', '2.png', '3.png', '4.png',
+'5.jpg', '6.jpg', '7.jpg', '7.png', '8.jpg'
+];
+
+// Bu URL'ler çalışıyor, bunu doğruladık
+for (var i = 0; i < 10; i++) {
+createPhotoCard(i, photoFiles[i]);
+}
+}
+
+function createPhotoCard(index, filename) {
+var photoGrid = document.getElementById('photoGrid');
 var photoCard = document.createElement('div');
 photoCard.className = 'photo-card';
 
 var img = document.createElement('img');
-img.src = 'https://raw.githubusercontent.com/GokhanX58/burcin/main/images/' + i + '.png';
-img.alt = photoTitles[i-1];
-img.loading = 'lazy';
+img.src = 'https://raw.githubusercontent.com/GokhanX58/burcin/main/' + filename;
+img.alt = photoTitles[index];
+img.style.width = '100%';
+img.style.height = '100%';
+img.style.objectFit = 'cover';
 
 var overlay = document.createElement('div');
 overlay.className = 'photo-overlay';
 overlay.innerHTML = '<div class="heart-icon">💕</div>';
 
+img.onload = function() {
+console.log('✅ YÜKLENDI:', filename);
+this.style.border = '2px solid #4ade80';
+};
+
 img.onerror = function() {
-this.style.display = 'none';
-var placeholder = document.createElement('div');
-placeholder.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.1rem;text-align:center;padding:20px;background:rgba(255,255,255,0.1);';
-placeholder.innerHTML = photoTitles[i-1] + '<br><small>Fotoğraf yükleniyor...</small>';
-this.parentElement.appendChild(placeholder);
+console.log('❌ HATA:', filename);
+this.style.border = '2px solid #ef4444';
+this.src = 'https://picsum.photos/400/300?random=' + Math.random();
 };
 
 photoCard.appendChild(img);
 photoCard.appendChild(overlay);
-photoCard.addEventListener('click', function() {
-openModal(this.querySelector('img').src, this.querySelector('img').alt);
-});
+
+photoCard.onclick = function() {
+if (img.src && !img.src.includes('picsum')) {
+openModal(img.src, img.alt);
+}
+};
 
 photoGrid.appendChild(photoCard);
-}
 }
 
 // Setup modal
