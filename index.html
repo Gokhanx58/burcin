@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>💕 Bizim Aşk Hikayemiz - Gökhan & Burçin</title>
 <style>
+/* Tüm CSS kodları aynen korundu */
 * {
   margin: 0;
   padding: 0;
@@ -639,89 +640,73 @@ Bu sayfa sevgiyle hazırlanmıştır 💕
 </audio>
 
 <script>
-// Fotoğraf verileri
-const photoData = [
-  { url: "https://i.ibb.co/nyLp5Mr/1.png", title: "💕 İlk Fotoğrafımız" },
-  { url: "https://i.ibb.co/zKJNBbc/2.png", title: "🌹 Romantik Anımız" },
-  { url: "https://i.ibb.co/P8m42KR/3.png", title: "😊 Mutlu Günümüz" },
-  { url: "https://i.ibb.co/rGpNGNQ/4.png", title: "🎉 Özel Günümüz" },
-  { url: "https://i.ibb.co/PSQtYpc/5.png", title: "💖 Aşkımızın Kanıtı" },
-  { url: "https://i.ibb.co/MDPzf6X/6.png", title: "✨ Güzel Anılarımız" },
-  { url: "https://i.ibb.co/Fj0BFVh/7.png", title: "🌟 Beraber Anımız" },
-  { url: "https://i.ibb.co/kVfPYtb/8.png", title: "💝 Kalbimizden" },
-  { url: "https://i.ibb.co/n85S2t6/9.png", title: "🌈 Renkli Anılarımız" },
-  { url: "https://i.ibb.co/PZbyvvB/10.png", title: "🌙 Ay Işığında" }
+// GOOGLE DRIVE FOTOĞRAF LİNKLERİNİZ
+const drivePhotos = [
+  {
+    id: "1yxyQF1RNuK_vFJtiylnFLwqcl_QaeVHB",
+    title: "💕 İlk Fotoğrafımız"
+  },
+  {
+    id: "1jC5SKPzxvZuDuYTI629T7ZOxw3vzgElP",
+    title: "🌹 Romantik Anımız"
+  },
+  {
+    id: "1zkBn0SM_Uod-ddOt6uPAvPrIC2XI83BC",
+    title: "😊 Mutlu Günümüz"
+  },
+  {
+    id: "181ObgvEyAt4iR7e1Sco_0a17XFUyuVgC",
+    title: "🎉 Özel Günümüz"
+  },
+  {
+    id: "17aHLPFf4pLUIocUrz4vw82Gunzm6XEXw",
+    title: "💖 Aşkımızın Kanıtı"
+  },
+  {
+    id: "1_Ycdtdrwujq_psPT1vlyjROY9UFMTN4N",
+    title: "✨ Güzel Anılarımız"
+  },
+  {
+    id: "1pv3o-7G_RXzpDOO-RkX1es2ddbmSLXUJ",
+    title: "🌟 Beraber Anımız"
+  },
+  {
+    id: "1AfeRtl9qrtUXaSk0odhWcDIWDY1wzpHu",
+    title: "💝 Kalbimizden"
+  },
+  {
+    id: "1TQM9ZiSDSAY6rg9uex9IDv9M3OHFCqK5",
+    title: "🌈 Renkli Anılarımız"
+  },
+  {
+    id: "1wF66f1NB0mplHuMLtAoh6FtibRDfPDdN",
+    title: "🌙 Ay Işığında"
+  }
 ];
 
-// Sayfa yüklendiğinde
-document.addEventListener('DOMContentLoaded', function() {
-  initializeFloatingHearts();
-  initializeStars();
-  setupMusicControls();
-  loadPhotos();
-  setupModal();
-  
-  // Müziği 2 saniye sonra otomatik başlat
-  setTimeout(autoPlayMusic, 2000);
-});
-
-// Floating hearts oluştur
-function initializeFloatingHearts() {
-  const heartsContainer = document.getElementById('floatingHearts');
-  for (let i = 0; i < 20; i++) {
-    const heart = document.createElement('div');
-    heart.className = 'heart';
-    heart.innerHTML = '💕';
-    heart.style.left = Math.random() * 100 + '%';
-    heart.style.top = Math.random() * 100 + '%';
-    heart.style.animationDelay = Math.random() * 6 + 's';
-    heartsContainer.appendChild(heart);
-  }
-}
-
-// Yıldız arka planı oluştur
-function initializeStars() {
-  const starsContainer = document.getElementById('starsBg');
-  for (let i = 0; i < 50; i++) {
-    const star = document.createElement('div');
-    star.className = 'star-dot';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.animationDelay = Math.random() * 3 + 's';
-    starsContainer.appendChild(star);
-  }
+// Google Drive'dan direkt görüntüleme linki oluştur
+function getDriveImageUrl(fileId) {
+  return `https://drive.google.com/uc?export=view&id=${fileId}`;
 }
 
 // Fotoğrafları yükle
 function loadPhotos() {
   const photoGrid = document.getElementById('photoGrid');
-  const loadedUrls = new Set(); // Yüklenen URL'leri takip et
+  photoGrid.innerHTML = '';
 
-  photoData.forEach(photo => {
-    // Eğer bu URL daha önce yüklendiyse atla (tekrar eden fotoğrafları önle)
-    if (loadedUrls.has(photo.url)) {
-      console.warn(`Tekrar eden fotoğraf atlandı: ${photo.url}`);
-      return;
-    }
-    loadedUrls.add(photo.url);
-
+  drivePhotos.forEach(photo => {
     const card = document.createElement('div');
     card.className = 'photo-card';
     
-    const img = new Image();
-    img.src = photo.url;
+    const img = document.createElement('img');
+    img.src = getDriveImageUrl(photo.id);
     img.alt = photo.title;
-    img.loading = 'lazy';
+    img.loading = 'eager';
     
-    img.onload = function() {
-      console.log(`✅ Fotoğraf yüklendi: ${photo.title}`);
-      card.style.border = '2px solid #4ade80';
-    };
-    
-    img.onerror = function() {
-      console.error(`❌ Fotoğraf yüklenemedi: ${photo.url}`);
-      this.src = 'https://via.placeholder.com/400x400/ec4899/ffffff?text=Foto%C4%9Fraf+Y%C3%BCklenemedi';
-      card.style.border = '2px solid #ef4444';
+    // Hata durumunda yedek resim göster
+    img.onerror = () => {
+      console.error(`Fotoğraf yüklenemedi: ${photo.title}`);
+      img.src = 'https://via.placeholder.com/400x400/ec4899/ffffff?text=Foto%C4%9Fraf+Y%C3%BCklenemedi';
     };
     
     const overlay = document.createElement('div');
@@ -733,8 +718,20 @@ function loadPhotos() {
     photoGrid.appendChild(card);
     
     // Tıklama olayı
-    card.addEventListener('click', () => openModal(photo.url, photo.title));
+    card.addEventListener('click', () => {
+      openModal(getDriveImageUrl(photo.id), photo.title);
+    });
   });
+}
+
+// Modal aç
+function openModal(src, alt) {
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  
+  modalImg.src = src;
+  modalImg.alt = alt;
+  modal.style.display = 'block';
 }
 
 // Müzik kontrolleri
@@ -767,16 +764,6 @@ function setupMusicControls() {
   });
 }
 
-// Müziği otomatik başlat
-function autoPlayMusic() {
-  const audioPlayer = document.getElementById('audioPlayer');
-  audioPlayer.play().then(() => {
-    document.getElementById('playBtn').innerHTML = '⏸️';
-  }).catch(e => {
-    console.log('Otomatik çalma engellendi:', e);
-  });
-}
-
 // Zaman formatı
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -784,31 +771,49 @@ function formatTime(seconds) {
   return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
-// Modal ayarları
-function setupModal() {
-  const modal = document.getElementById('imageModal');
-  const closeBtn = document.querySelector('.close');
+// Sayfa yüklendiğinde
+document.addEventListener('DOMContentLoaded', function() {
+  // Floating hearts oluştur
+  const heartsContainer = document.getElementById('floatingHearts');
+  for (let i = 0; i < 20; i++) {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.innerHTML = '💕';
+    heart.style.left = Math.random() * 100 + '%';
+    heart.style.top = Math.random() * 100 + '%';
+    heart.style.animationDelay = Math.random() * 6 + 's';
+    heartsContainer.appendChild(heart);
+  }
 
-  closeBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
+  // Yıldız arka planı oluştur
+  const starsContainer = document.getElementById('starsBg');
+  for (let i = 0; i < 50; i++) {
+    const star = document.createElement('div');
+    star.className = 'star-dot';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    starsContainer.appendChild(star);
+  }
+
+  // Fotoğrafları ve müzik kontrollerini yükle
+  loadPhotos();
+  setupMusicControls();
+
+  // Modal kapatma
+  document.querySelector('.close').addEventListener('click', () => {
+    document.getElementById('imageModal').style.display = 'none';
   });
 
-  window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
-}
-
-// Modal aç
-function openModal(src, alt) {
-  const modal = document.getElementById('imageModal');
-  const modalImg = document.getElementById('modalImage');
-  
-  modalImg.src = src;
-  modalImg.alt = alt;
-  modal.style.display = 'block';
-}
+  // Müziği 2 saniye sonra otomatik başlat
+  setTimeout(() => {
+    document.getElementById('audioPlayer').play()
+      .then(() => {
+        document.getElementById('playBtn').innerHTML = '⏸️';
+      })
+      .catch(e => console.log('Otomatik çalma engellendi:', e));
+  }, 2000);
+});
 </script>
 </body>
 </html>
