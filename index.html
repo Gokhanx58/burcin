@@ -15,36 +15,30 @@
             animation: gradientShift 15s ease infinite;
             background-size: 400% 400%;
         }
-
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-
         .header {
             text-align: center;
             margin-bottom: 40px;
         }
-
         .main-title {
             font-size: 3rem;
             margin-bottom: 10px;
             text-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             margin: 30px 0;
         }
-
         .photo-card {
             border-radius: 15px;
             overflow: hidden;
@@ -52,19 +46,15 @@
             transition: transform 0.3s;
             aspect-ratio: 1;
         }
-
         .photo-card:hover {
             transform: translateY(-5px) scale(1.03);
         }
-
         .photo-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
-
-        /* Müzik Player Stilleri */
         .music-player {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
@@ -74,7 +64,6 @@
             text-align: center;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
-
         .play-btn {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             border: none;
@@ -87,38 +76,72 @@
             margin: 15px;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
-
-        /* Yıldız Bilgisi Stilleri */
+        .notes-section {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .note-card {
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+        .note-card:hover {
+            transform: scale(1.02);
+        }
+        .note-date {
+            color: #fbbf24;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
         .star-info {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 25px;
+            padding: 30px;
             margin-top: 40px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
-
         .star-info h2 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: #fbbf24;
+            font-size: 2rem;
         }
-
         .star-details {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
         }
-
         .star-card {
             background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
         .star-card h4 {
             color: #67e8f9;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .star-link {
+            color: #ec4899;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .star-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -130,9 +153,7 @@
         </div>
 
         <!-- Fotoğraf Galerisi -->
-        <div class="photo-grid" id="photoGrid">
-            <!-- Fotoğraflar buraya yüklenecek -->
-        </div>
+        <div class="photo-grid" id="photoGrid"></div>
 
         <!-- Müzik Player -->
         <div class="music-player">
@@ -143,32 +164,62 @@
             <input type="range" id="progressBar" value="0" style="width:100%; margin-top:15px;">
         </div>
 
+        <!-- Aşk Notları -->
+        <div class="notes-section">
+            <h2 style="text-align:center; margin-bottom:30px;">💌 Aşk Notlarımız</h2>
+            <div class="notes-grid">
+                <div class="note-card">
+                    <div class="note-date">❤️ 14 Şubat 2024</div>
+                    <p>"Sen benim hayatımdaki en güzel şarkısın. Seninle geçen her an bir masal gibi..."</p>
+                </div>
+                <div class="note-card">
+                    <div class="note-date">🌹 İlk Buluşma</div>
+                    <p>"Gözlerinde kayboldum, gülüşünde buldum kendimi. Bu aşkın başlangıcı..."</p>
+                </div>
+                <div class="note-card">
+                    <div class="note-date">💕 Bugün</div>
+                    <p>"Her gün seni daha çok seviyorum. Sen benim sonsuzluğumsun..."</p>
+                </div>
+                <div class="note-card">
+                    <div class="note-date">🌟 İlk Görüşte</div>
+                    <p>"O anda anladım ki, hayatım artık başka bir anlam kazanacaktı..."</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Yıldız Bilgisi -->
         <div class="star-info">
             <h2>✨ Gökhan & Burçin Yıldızı ✨</h2>
             <div class="star-details">
                 <div class="star-card">
-                    <h4>🌌 Konum</h4>
-                    <p>Cepheus Takımyıldızı</p>
+                    <h4>🌌 Konum & Koordinatlar</h4>
+                    <p>Cepheus (Kral) Takımyıldızı</p>
+                    <p>RA 00h10m05.810 +70°21'00.78''</p>
+                    <p>OSR Kodu: ZXM221070</p>
+                    <a href="https://osr.org/oms/tr/ZXM221070" class="star-link" target="_blank">Yıldız Görünüşü →</a>
                 </div>
                 <div class="star-card">
-                    <h4>📅 Kayıt Tarihi</h4>
-                    <p>10 Şubat 2024</p>
-                </div>
-                <div class="star-card">
-                    <h4>💫 Özellikler</h4>
+                    <h4>📅 Kayıt Bilgileri</h4>
+                    <p>10 Şubat 2024 tarihli</p>
+                    <p>Burçin Asil adına kayıtlı</p>
                     <p>Magnitude: 11.62</p>
+                    <a href="https://stars.osr.org/ZXM221070" class="star-link" target="_blank">Yıldız Profili →</a>
                 </div>
                 <div class="star-card">
-                    <h4>💝 Mesaj</h4>
-                    <p>"Seni Çok Seviyorum"</p>
+                    <h4>💫 Takımyıldız Hakkında</h4>
+                    <p>Cepheus, Kahraman takımyıldız ailesindendir. En iyi Ekim ayında görünür (+90° ila -10° enlemlerinde). Kral, Cassiopeia'nın kocasını ve Andromeda'nın babasını temsil eder.</p>
+                </div>
+                <div class="star-card">
+                    <h4>💝 Özel Mesaj</h4>
+                    <p style="font-style:italic;">"Sevgili Burçin Asil,<br>
+                    RA 00h10m05.810 +70°21'00.78'' koordinatlarındaki yıldızın ışığı Kral takımyıldızından yayılıyor. Bu yıldız Online Star Register'da artık sonsuza kadar Gökhan&Burçin adıyla bilinecek."</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // FOTOĞRAFLARI YÜKLE
+        // FOTOĞRAFLAR
         const drivePhotos = [
             { id: "1yxyQF1RNuK_vFJtiylnFLwqcl_QaeVHB", title: "💕 İlk Fotoğrafımız" },
             { id: "1jC5SKPzxvZuDuYTI629T7ZOxw3vzgElP", title: "🌹 Romantik Anımız" },
@@ -184,26 +235,20 @@
 
         function loadPhotos() {
             const photoGrid = document.getElementById('photoGrid');
-            
             drivePhotos.forEach(photo => {
                 const card = document.createElement('div');
                 card.className = 'photo-card';
-                
                 const img = document.createElement('img');
                 img.src = `https://drive.google.com/thumbnail?id=${photo.id}&sz=w1000`;
                 img.alt = photo.title;
                 img.loading = 'eager';
-                
-                img.onerror = () => {
-                    img.src = `https://lh3.googleusercontent.com/d/${photo.id}=s1000`;
-                };
-                
+                img.onerror = () => img.src = `https://lh3.googleusercontent.com/d/${photo.id}=s1000`;
                 card.appendChild(img);
                 photoGrid.appendChild(card);
             });
         }
 
-        // MÜZİK PLAYER
+        // MÜZİK
         const audio = new Audio('https://raw.githubusercontent.com/GokhanX58/burcin/main/R%C3%BCzgar%C4%B1n%20Sesi%20(%20SADECE%20P%C4%B0YANO%20).mp3');
         const playBtn = document.getElementById('playBtn');
         const progressBar = document.getElementById('progressBar');
@@ -220,20 +265,14 @@
             timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
         });
 
-        progressBar.addEventListener('input', () => {
-            audio.currentTime = progressBar.value;
-        });
+        progressBar.addEventListener('input', () => audio.currentTime = progressBar.value);
+        playBtn.addEventListener('click', togglePlay);
 
-        playBtn.addEventListener('click', () => {
-            if (isPlaying) {
-                audio.pause();
-                playBtn.textContent = '▶️';
-            } else {
-                audio.play();
-                playBtn.textContent = '⏸️';
-            }
+        function togglePlay() {
+            isPlaying ? audio.pause() : audio.play();
+            playBtn.textContent = isPlaying ? '▶️' : '⏸️';
             isPlaying = !isPlaying;
-        });
+        }
 
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
@@ -244,8 +283,6 @@
         // SAYFA YÜKLENDİĞİNDE
         window.addEventListener('load', () => {
             loadPhotos();
-            
-            // Müziği 3 saniye sonra otomatik başlat
             setTimeout(() => {
                 audio.play().catch(e => console.log("Otomatik çalma engellendi:", e));
                 playBtn.textContent = '⏸️';
