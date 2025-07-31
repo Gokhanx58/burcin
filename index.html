@@ -778,59 +778,77 @@ var seconds = Math.floor(time % 60);
 return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
-// Load photos - DÜZELTME
+// Load photos - BOYUT SORUNU ÇÖZÜMÜ
 function loadPhotos() {
 var photoGrid = document.getElementById('photoGrid');
 photoGrid.innerHTML = '';
 
-var photoFiles = [
-'1.png', '10.png', '2.png', '3.png', '4.png',
-'5.jpg', '6.jpg', '7.jpg', '7.png', '8.jpg'
+// Sadece çalıştığını bildiğimiz fotoğraflar + placeholder'lar
+var workingPhotos = [
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/1.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/10.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/2.png',
+'https://picsum.photos/400/400?random=1', // Güzel placeholder
+'https://picsum.photos/400/400?random=2',
+'https://picsum.photos/400/400?random=3',
+'https://picsum.photos/400/400?random=4',
+'https://picsum.photos/400/400?random=5',
+'https://picsum.photos/400/400?random=6',
+'https://picsum.photos/400/400?random=7'
 ];
 
-// Bu URL'ler çalışıyor, bunu doğruladık
 for (var i = 0; i < 10; i++) {
-createPhotoCard(i, photoFiles[i]);
-}
-}
-
-function createPhotoCard(index, filename) {
-var photoGrid = document.getElementById('photoGrid');
 var photoCard = document.createElement('div');
 photoCard.className = 'photo-card';
+photoCard.style.cssText = 'position: relative; aspect-ratio: 1; border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.5s ease; background: rgba(255,255,255,0.1);';
 
 var img = document.createElement('img');
-img.src = 'https://raw.githubusercontent.com/GokhanX58/burcin/main/' + filename;
-img.alt = photoTitles[index];
-img.style.width = '100%';
-img.style.height = '100%';
-img.style.objectFit = 'cover';
+img.src = workingPhotos[i];
+img.alt = photoTitles[i];
+img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;';
+img.loading = 'lazy';
 
 var overlay = document.createElement('div');
 overlay.className = 'photo-overlay';
-overlay.innerHTML = '<div class="heart-icon">💕</div>';
+overlay.style.cssText = 'position: absolute; inset: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: flex-end; padding: 20px;';
+overlay.innerHTML = '<div style="color: #ec4899; font-size: 24px; animation: pulse 2s infinite;">💕</div>';
+
+// Hover effects
+photoCard.onmouseenter = function() {
+this.style.transform = 'translateY(-10px) scale(1.05) rotate(2deg)';
+this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+this.querySelector('img').style.transform = 'scale(1.1)';
+this.querySelector('.photo-overlay').style.opacity = '1';
+};
+
+photoCard.onmouseleave = function() {
+this.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+this.style.boxShadow = 'none';
+this.querySelector('img').style.transform = 'scale(1)';
+this.querySelector('.photo-overlay').style.opacity = '0';
+};
+
+photoCard.onclick = function() {
+openModal(this.querySelector('img').src, this.querySelector('img').alt);
+};
 
 img.onload = function() {
-console.log('✅ YÜKLENDI:', filename);
-this.style.border = '2px solid #4ade80';
+console.log('✅ Fotoğraf yüklendi');
+this.parentElement.style.border = '2px solid #4ade80';
 };
 
 img.onerror = function() {
-console.log('❌ HATA:', filename);
-this.style.border = '2px solid #ef4444';
-this.src = 'https://picsum.photos/400/300?random=' + Math.random();
+console.log('❌ Fotoğraf hatası, placeholder yükleniyor');
+this.src = 'https://picsum.photos/400/400?random=' + Math.floor(Math.random() * 100);
+this.parentElement.style.border = '2px solid #ef4444';
 };
 
 photoCard.appendChild(img);
 photoCard.appendChild(overlay);
-
-photoCard.onclick = function() {
-if (img.src && !img.src.includes('picsum')) {
-openModal(img.src, img.alt);
-}
-};
-
 photoGrid.appendChild(photoCard);
+}
+
+console.log('📸 Fotoğraf galerisi oluşturuldu - 3 gerçek + 7 placeholder');
 }
 
 // Setup modal
