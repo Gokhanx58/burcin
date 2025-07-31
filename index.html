@@ -27,7 +27,6 @@ position: relative;
 100% { background-position: 0% 50%; }
 }
 
-/* Floating hearts animation */
 .floating-hearts {
 position: absolute;
 top: 0;
@@ -64,7 +63,6 @@ position: relative;
 z-index: 10;
 }
 
-/* Header Styles */
 .header {
 text-align: center;
 margin-bottom: 60px;
@@ -109,7 +107,6 @@ transform: translateY(0);
 }
 }
 
-/* Glass Card Styles */
 .glass-card {
 background: rgba(255, 255, 255, 0.15);
 backdrop-filter: blur(20px);
@@ -118,7 +115,6 @@ border: 1px solid rgba(255, 255, 255, 0.2);
 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* Photo Gallery Styles */
 .photo-section {
 margin-bottom: 80px;
 animation: fadeInUp 1s ease 0.4s both;
@@ -194,7 +190,6 @@ animation: pulse 2s infinite;
 50% { transform: scale(1.2); }
 }
 
-/* Music Section Styles */
 .music-section {
 margin-bottom: 80px;
 animation: fadeInUp 1s ease 0.6s both;
@@ -260,7 +255,6 @@ border-radius: 3px;
 transition: width 0.3s ease;
 }
 
-/* Notes Section Styles */
 .notes-section {
 margin-bottom: 80px;
 animation: fadeInUp 1s ease 0.8s both;
@@ -316,7 +310,6 @@ font-style: italic;
 font-size: 1rem;
 }
 
-/* Star Section Styles */
 .star-section {
 background: linear-gradient(135deg, #1e293b, #0f172a);
 border-radius: 24px;
@@ -384,7 +377,6 @@ line-height: 1.6;
 font-size: 0.95rem;
 }
 
-/* Footer */
 .footer {
 text-align: center;
 color: rgba(255, 255, 255, 0.8);
@@ -406,7 +398,6 @@ font-size: 24px;
 animation: pulse 2s infinite;
 }
 
-/* Modal Styles */
 .modal {
 display: none;
 position: fixed;
@@ -452,7 +443,6 @@ transition: opacity 0.3s ease;
 opacity: 0.7;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
 .container {
 padding: 10px;
@@ -492,11 +482,9 @@ gap: 10px;
 </style>
 </head>
 <body>
-<!-- Floating Hearts Background -->
 <div class="floating-hearts" id="floatingHearts"></div>
 
 <div class="container">
-<!-- Header -->
 <div class="header">
 <h1 class="main-title">💕 Bizim Aşk Hikayemiz 💕</h1>
 <div class="subtitle">
@@ -506,7 +494,6 @@ gap: 10px;
 </div>
 </div>
 
-<!-- Photo Gallery -->
 <div class="photo-section">
 <div class="glass-card" style="padding: 30px; margin-bottom: 40px;">
 <h2 class="section-title">
@@ -518,7 +505,6 @@ gap: 10px;
 </div>
 </div>
 
-<!-- Music Section -->
 <div class="music-section">
 <div class="music-card glass-card">
 <h2 class="section-title" style="color: white; margin-bottom: 30px;">
@@ -557,7 +543,6 @@ Rüzgarın Sesi - Piyano 🎹
 </div>
 </div>
 
-<!-- Love Notes -->
 <div class="notes-section">
 <h2 class="section-title">
 💌 Aşk Notlarımız
@@ -601,7 +586,6 @@ Rüzgarın Sesi - Piyano 🎹
 </div>
 </div>
 
-<!-- Star Section -->
 <div class="star-section">
 <div class="stars-bg" id="starsBg"></div>
 <h2 class="star-title">✨ Gökhan & Burçin Yıldızı ✨</h2>
@@ -633,7 +617,6 @@ Rüzgarın Sesi - Piyano 🎹
 </div>
 </div>
 
-<!-- Footer -->
 <div class="footer">
 <div class="footer-hearts">
 <span class="footer-heart">💕</span>
@@ -646,7 +629,6 @@ Bu sayfa sevgiyle hazırlanmıştır 💕
 </div>
 </div>
 
-<!-- Modal for Full Size Images -->
 <div id="imageModal" class="modal">
 <span class="close">&times;</span>
 <div class="modal-content">
@@ -654,10 +636,8 @@ Bu sayfa sevgiyle hazırlanmıştır 💕
 </div>
 </div>
 
-<!-- Audio Element -->
 <audio id="audioPlayer" loop>
-<source src="https://raw.githubusercontent.com/GokhanX58/burcin/main/Rüzgarın%20Sesi%20(%20SADECE%20PİYANO%20).mp3" type="audio/mpeg">
-<source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+<source src="https://raw.githubusercontent.com/GokhanX58/burcin/main/R%C3%BCzgar%C4%B1n%20Sesi%20(%20SADECE%20P%C4%B0YANO%20).mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -687,8 +667,6 @@ setupModal();
 setTimeout(function() {
 autoPlayMusic();
 }, 2000);
-
-console.log('✨ Site yüklendi! Modern aşk hikayesi hazır.');
 });
 
 // Create floating hearts background
@@ -754,7 +732,6 @@ function autoPlayMusic() {
 audioPlayer.play().then(function() {
 isPlaying = true;
 document.getElementById('playBtn').innerHTML = '⏸️';
-console.log('🎵 Müzik otomatik başladı!');
 }).catch(function(e) {
 console.log('Otomatik çalma engellendi:', e.message);
 });
@@ -778,77 +755,55 @@ var seconds = Math.floor(time % 60);
 return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
-// Load photos - BOYUT SORUNU ÇÖZÜMÜ
+// Load photos with correct URLs
 function loadPhotos() {
 var photoGrid = document.getElementById('photoGrid');
 photoGrid.innerHTML = '';
 
-// Sadece çalıştığını bildiğimiz fotoğraflar + placeholder'lar
-var workingPhotos = [
+// DÜZELTİLMİŞ FOTOĞRAF URL'LERİ
+var photoUrls = [
 'https://raw.githubusercontent.com/GokhanX58/burcin/main/1.png',
-'https://raw.githubusercontent.com/GokhanX58/burcin/main/10.png',
 'https://raw.githubusercontent.com/GokhanX58/burcin/main/2.png',
-'https://picsum.photos/400/400?random=1', // Güzel placeholder
-'https://picsum.photos/400/400?random=2',
-'https://picsum.photos/400/400?random=3',
-'https://picsum.photos/400/400?random=4',
-'https://picsum.photos/400/400?random=5',
-'https://picsum.photos/400/400?random=6',
-'https://picsum.photos/400/400?random=7'
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/3.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/4.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/5.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/6.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/7.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/8.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/9.png',
+'https://raw.githubusercontent.com/GokhanX58/burcin/main/10.png'
 ];
 
 for (var i = 0; i < 10; i++) {
 var photoCard = document.createElement('div');
 photoCard.className = 'photo-card';
-photoCard.style.cssText = 'position: relative; aspect-ratio: 1; border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.5s ease; background: rgba(255,255,255,0.1);';
 
 var img = document.createElement('img');
-img.src = workingPhotos[i];
+img.src = photoUrls[i];
 img.alt = photoTitles[i];
-img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;';
 img.loading = 'lazy';
 
 var overlay = document.createElement('div');
 overlay.className = 'photo-overlay';
-overlay.style.cssText = 'position: absolute; inset: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: flex-end; padding: 20px;';
-overlay.innerHTML = '<div style="color: #ec4899; font-size: 24px; animation: pulse 2s infinite;">💕</div>';
-
-// Hover effects
-photoCard.onmouseenter = function() {
-this.style.transform = 'translateY(-10px) scale(1.05) rotate(2deg)';
-this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
-this.querySelector('img').style.transform = 'scale(1.1)';
-this.querySelector('.photo-overlay').style.opacity = '1';
-};
-
-photoCard.onmouseleave = function() {
-this.style.transform = 'translateY(0) scale(1) rotate(0deg)';
-this.style.boxShadow = 'none';
-this.querySelector('img').style.transform = 'scale(1)';
-this.querySelector('.photo-overlay').style.opacity = '0';
-};
-
-photoCard.onclick = function() {
-openModal(this.querySelector('img').src, this.querySelector('img').alt);
-};
-
-img.onload = function() {
-console.log('✅ Fotoğraf yüklendi');
-this.parentElement.style.border = '2px solid #4ade80';
-};
-
-img.onerror = function() {
-console.log('❌ Fotoğraf hatası, placeholder yükleniyor');
-this.src = 'https://picsum.photos/400/400?random=' + Math.floor(Math.random() * 100);
-this.parentElement.style.border = '2px solid #ef4444';
-};
+overlay.innerHTML = '<div class="heart-icon">💕</div>';
 
 photoCard.appendChild(img);
 photoCard.appendChild(overlay);
 photoGrid.appendChild(photoCard);
-}
 
-console.log('📸 Fotoğraf galerisi oluşturuldu - 3 gerçek + 7 placeholder');
+// Click event for modal
+photoCard.addEventListener('click', function() {
+var imgSrc = this.querySelector('img').src;
+var imgAlt = this.querySelector('img').alt;
+openModal(imgSrc, imgAlt);
+});
+
+// Error handling
+img.onerror = function() {
+console.log('Fotoğraf yüklenemedi: ' + this.src);
+this.src = 'https://via.placeholder.com/400x400?text=Fotoğraf+Yüklenemedi';
+};
+}
 }
 
 // Setup modal
